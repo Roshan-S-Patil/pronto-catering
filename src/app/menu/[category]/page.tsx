@@ -207,7 +207,7 @@ export default function CategoryPage({ params }: { params: Promise<{ category: s
         <div className="absolute -bottom-16 -left-8 w-72 h-72 rounded-full bg-white/5" />
         <div className="absolute top-6 right-1/3 w-24 h-24 rounded-full bg-secondary/20" />
 
-        <div className="relative z-10 max-w-6xl mx-auto px-6 py-10">
+        <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-10">
           <p className="text-white/50 text-xs mb-3 tracking-widest uppercase">
             <a href="/" className="hover:text-white transition-colors">Home</a>
             <span className="mx-2">/</span>
@@ -218,7 +218,7 @@ export default function CategoryPage({ params }: { params: Promise<{ category: s
 
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div>
-              <h1 className="text-white text-3xl md:text-4xl font-bold leading-tight">
+              <h1 className="text-white text-2xl sm:text-3xl md:text-4xl font-bold leading-tight">
                 <span className="text-secondary">{categoryName}</span>
               </h1>
               <p className="text-white/60 text-sm mt-1">
@@ -238,16 +238,16 @@ export default function CategoryPage({ params }: { params: Promise<{ category: s
 
       {/* ── Filter & Search Bar ── */}
       <div className="sticky top-[52px] z-40 bg-white border-b border-gray-200 shadow-sm">
-        <div className="max-w-6xl mx-auto px-6 py-3 flex items-center gap-3">
+        <div className="max-w-6xl mx-auto px-3 sm:px-6 py-2.5 sm:py-3 flex items-center gap-2 sm:gap-3">
 
           {/* Filter button + popover wrapper */}
-          <div className="relative" ref={popoverRef}>
+          <div className="relative flex-shrink-0" ref={popoverRef}>
             <button
               onClick={() => popoverOpen ? setPopoverOpen(false) : openPopover()}
-              className="flex items-center gap-2 border border-gray-300 text-gray-700 px-4 py-2 rounded-full text-sm font-medium hover:border-primary hover:text-primary transition-colors"
+              className="flex items-center gap-1.5 sm:gap-2 border border-gray-300 text-gray-700 px-3 sm:px-4 py-2 rounded-full text-sm font-medium hover:border-primary hover:text-primary transition-colors"
             >
               <MdFilterList className="text-base" />
-              Filter
+              <span className="hidden xs:inline">Filter</span>
               {totalActive > 0 && (
                 <span className="bg-secondary text-white text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center">
                   {totalActive}
@@ -255,13 +255,13 @@ export default function CategoryPage({ params }: { params: Promise<{ category: s
               )}
             </button>
 
-            {/* Popover */}
+            {/* Popover — stacks vertically on mobile */}
             {popoverOpen && (
-              <div className="absolute top-full left-0 mt-2 w-[520px] max-w-[95vw] bg-white rounded-2xl shadow-2xl border border-gray-100 z-50 overflow-hidden">
-                <div className="flex">
+              <div className="absolute top-full left-0 mt-2 w-[min(520px,calc(100vw-24px))] bg-white rounded-2xl shadow-2xl border border-gray-100 z-50 overflow-hidden">
+                <div className="flex flex-col sm:flex-row">
 
-                  {/* Left — umbrella terms */}
-                  <div className="w-44 bg-gray-50 border-r border-gray-100 p-3 flex flex-col gap-1">
+                  {/* Umbrella terms — row on mobile, column on desktop */}
+                  <div className="sm:w-44 bg-gray-50 sm:border-r border-b sm:border-b-0 border-gray-100 p-2 sm:p-3 flex flex-row sm:flex-col gap-1 overflow-x-auto">
                     {(["category", "dietary", "price"] as UmbrellaKey[]).map((key) => {
                       const labels: Record<UmbrellaKey, string> = { category: "Menu Category", dietary: "Dietary", price: "Price" };
                       const count = umbrellaCounts[key];
@@ -269,13 +269,13 @@ export default function CategoryPage({ params }: { params: Promise<{ category: s
                         <button
                           key={key}
                           onClick={() => setActiveUmbrella(key)}
-                          className={`flex items-center justify-between w-full text-left px-3 py-2.5 rounded-xl text-sm font-medium transition-colors ${
+                          className={`flex items-center justify-between flex-shrink-0 text-left px-3 py-2 sm:py-2.5 rounded-xl text-sm font-medium transition-colors ${
                             activeUmbrella === key ? "bg-primary text-white" : "text-gray-600 hover:bg-gray-200"
                           }`}
                         >
-                          {labels[key]}
+                          <span className="whitespace-nowrap">{labels[key]}</span>
                           {count > 0 && (
-                            <span className={`text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center ${activeUmbrella === key ? "bg-white text-primary" : "bg-secondary text-white"}`}>
+                            <span className={`ml-2 text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 ${activeUmbrella === key ? "bg-white text-primary" : "bg-secondary text-white"}`}>
                               {count}
                             </span>
                           )}
@@ -284,8 +284,8 @@ export default function CategoryPage({ params }: { params: Promise<{ category: s
                     })}
                   </div>
 
-                  {/* Right — panel */}
-                  <div className="flex-1 p-4 max-h-72 overflow-y-auto">
+                  {/* Panel */}
+                  <div className="flex-1 p-3 sm:p-4 max-h-60 sm:max-h-72 overflow-y-auto">
                     {activeUmbrella === "category" && (
                       <div className="flex flex-col gap-2">
                         {CATEGORIES.map((cat) => {
@@ -358,7 +358,7 @@ export default function CategoryPage({ params }: { params: Promise<{ category: s
                   </button>
                   <div className="flex items-center gap-2">
                     {pendingTotal > 0 && (
-                      <span className="text-xs text-gray-500">{pendingTotal} filter{pendingTotal > 1 ? "s" : ""} selected</span>
+                      <span className="text-xs text-gray-500 hidden sm:inline">{pendingTotal} filter{pendingTotal > 1 ? "s" : ""} selected</span>
                     )}
                     <button
                       onClick={applyFilters}
@@ -373,14 +373,14 @@ export default function CategoryPage({ params }: { params: Promise<{ category: s
           </div>
 
           {/* Search */}
-          <div className="flex-1 relative">
+          <div className="flex-1 relative min-w-0">
             <MdSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-lg" />
             <input
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search items…"
-              className="w-full border border-gray-300 rounded-full pl-9 pr-4 py-2 text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:border-primary transition-colors"
+              placeholder="Search…"
+              className="w-full border border-gray-300 rounded-full pl-9 pr-8 py-2 text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:border-primary transition-colors"
             />
             {search && (
               <button onClick={() => setSearch("")} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
@@ -389,9 +389,9 @@ export default function CategoryPage({ params }: { params: Promise<{ category: s
             )}
           </div>
 
-          {/* Active filter chips */}
+          {/* Clear all */}
           {totalActive > 0 && (
-            <button onClick={clearAll} className="text-xs text-secondary font-semibold hover:underline whitespace-nowrap">
+            <button onClick={clearAll} className="text-xs text-secondary font-semibold hover:underline whitespace-nowrap flex-shrink-0 hidden sm:block">
               Clear all
             </button>
           )}
@@ -399,7 +399,7 @@ export default function CategoryPage({ params }: { params: Promise<{ category: s
       </div>
 
       {/* ── Items Grid ── */}
-      <main className="max-w-6xl mx-auto px-6 py-10 w-full">
+      <main className="max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-10 w-full">
         {visible.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-24 text-center">
             <div className="text-5xl mb-4">🍽️</div>
@@ -412,7 +412,7 @@ export default function CategoryPage({ params }: { params: Promise<{ category: s
         ) : (
           <>
             <p className="text-gray-400 text-xs mb-6">{visible.length} item{visible.length !== 1 ? "s" : ""} found</p>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
               {visible.map((item) => {
                 const dietaryDetails = DIETARY_TAGS.filter((t) => item.dietary.includes(t.key));
                 const cartItem = items.find((i) => i.id === item.id);
@@ -420,7 +420,7 @@ export default function CategoryPage({ params }: { params: Promise<{ category: s
                 return (
                   <div key={item.id} className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-shadow duration-300 flex flex-col">
                     {/* Image */}
-                    <div className="relative h-48 overflow-hidden">
+                    <div className="relative h-40 sm:h-48 overflow-hidden">
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
                         src={item.img}
@@ -430,14 +430,14 @@ export default function CategoryPage({ params }: { params: Promise<{ category: s
                     </div>
 
                     {/* Body */}
-                    <div className="p-5 flex flex-col flex-1">
+                    <div className="p-4 sm:p-5 flex flex-col flex-1">
                       <h3 className="text-primary font-bold text-base mb-1">{item.name}</h3>
                       <p className="text-gray-500 text-sm mb-2 flex-1">{item.desc}</p>
                       <p className="text-secondary font-bold text-base mb-3">${item.price.toFixed(2)}</p>
 
                       {/* Dietary pills */}
                       {dietaryDetails.length > 0 && (
-                        <div className="flex flex-wrap gap-1.5 mb-4">
+                        <div className="flex flex-wrap gap-1 mb-3">
                           {dietaryDetails.map((tag) => (
                             <DietaryPill key={tag.key} tag={tag} />
                           ))}
@@ -445,29 +445,29 @@ export default function CategoryPage({ params }: { params: Promise<{ category: s
                       )}
 
                       <div className="flex items-center gap-2 mt-auto">
-                        {/* Qty stepper */}
+                        {/* Qty stepper — bigger touch targets on mobile */}
                         <div className="flex items-center bg-gray-100 rounded-full px-1.5 py-1 gap-1">
                           <button
                             onClick={() => cartItem ? (qty === 1 ? removeItem(item.id) : updateQty(item.id, qty - 1)) : null}
                             disabled={!cartItem}
-                            className="w-6 h-6 rounded-full bg-white shadow flex items-center justify-center text-primary hover:bg-primary hover:text-white transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                            className="w-8 h-8 rounded-full bg-white shadow flex items-center justify-center text-primary hover:bg-primary hover:text-white transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
                           >
-                            <MdRemove className="text-xs" />
+                            <MdRemove className="text-sm" />
                           </button>
-                          <span className="font-bold text-sm text-gray-800 w-5 text-center">{qty}</span>
+                          <span className="font-bold text-sm text-gray-800 w-6 text-center">{qty}</span>
                           <button
                             onClick={() => cartItem ? updateQty(item.id, qty + 1) : null}
                             disabled={!cartItem}
-                            className="w-6 h-6 rounded-full bg-primary text-white flex items-center justify-center hover:bg-secondary transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                            className="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center hover:bg-secondary transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
                           >
-                            <MdAdd className="text-xs" />
+                            <MdAdd className="text-sm" />
                           </button>
                         </div>
 
                         {/* Add to Cart */}
                         <button
                           onClick={() => addItem({ id: item.id, name: item.name, price: item.price, img: item.img, category: item.category, dietary: item.dietary })}
-                          className={`flex-1 flex items-center justify-center gap-1.5 font-semibold text-sm py-2 rounded-full transition-colors ${cartItem ? "bg-green-500 text-white hover:bg-green-600" : "bg-primary text-white hover:bg-secondary"}`}
+                          className={`flex-1 flex items-center justify-center gap-1.5 font-semibold text-xs sm:text-sm py-2.5 rounded-full transition-colors ${cartItem ? "bg-green-500 text-white hover:bg-green-600" : "bg-primary text-white hover:bg-secondary"}`}
                         >
                           {cartItem ? <><MdCheck className="text-sm" /> Added</> : <><MdShoppingCart className="text-sm" /> Add to Cart</>}
                         </button>
@@ -483,7 +483,7 @@ export default function CategoryPage({ params }: { params: Promise<{ category: s
 
       {/* ── Footer ── */}
       <footer className="mt-auto bg-gray-900 text-white py-6">
-        <div className="max-w-6xl mx-auto px-6 text-center text-gray-400 text-sm">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 text-center text-gray-400 text-sm">
           © 2025 Pronto Gourmet Catering. All rights reserved.
         </div>
       </footer>

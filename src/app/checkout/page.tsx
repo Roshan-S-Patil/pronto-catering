@@ -6,7 +6,7 @@ import { useCart } from "@/context/CartContext";
 import { MdAdd, MdRemove, MdClose, MdLocalShipping, MdStorefront, MdDiscount } from "react-icons/md";
 
 const DELIVERY_FEE = 22.0;
-const TAX_DIVISOR = 11; // GST-inclusive: tax = total / 11
+const TAX_DIVISOR = 11;
 const DISCOUNT_CODES: Record<string, number> = {
   PRONTO10: 0.1,
   PRONTO20: 0.2,
@@ -51,7 +51,6 @@ export default function CheckoutPage() {
     setDiscountError("");
   }
 
-  // ── Totals ──
   const subtotal = items.reduce((s, i) => s + i.price * i.quantity, 0);
   const deliveryFee = method === "delivery" ? DELIVERY_FEE : 0;
   const discountAmount = subtotal * discountRate;
@@ -62,7 +61,7 @@ export default function CheckoutPage() {
     return (
       <div className="flex flex-col min-h-screen font-sans bg-gray-50">
         <Navbar />
-        <div className="flex flex-col items-center justify-center flex-1 py-28 text-center px-6">
+        <div className="flex flex-col items-center justify-center flex-1 py-28 text-center px-4">
           <p className="text-5xl mb-4">🛒</p>
           <h2 className="text-gray-600 font-bold text-xl mb-2">Your cart is empty</h2>
           <p className="text-gray-400 text-sm mb-6">Add items from the menu before checking out.</p>
@@ -82,7 +81,7 @@ export default function CheckoutPage() {
       <header className="relative bg-primary overflow-hidden">
         <div className="absolute -top-12 -right-12 w-56 h-56 rounded-full bg-white/5" />
         <div className="absolute -bottom-16 -left-8 w-72 h-72 rounded-full bg-white/5" />
-        <div className="relative z-10 max-w-5xl mx-auto px-6 py-10">
+        <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 py-8 sm:py-10">
           <p className="text-white/50 text-xs mb-3 tracking-widest uppercase">
             <a href="/" className="hover:text-white transition-colors">Home</a>
             <span className="mx-2">/</span>
@@ -90,21 +89,21 @@ export default function CheckoutPage() {
             <span className="mx-2">/</span>
             <span className="text-secondary">Checkout</span>
           </p>
-          <h1 className="text-white text-3xl md:text-4xl font-bold">
+          <h1 className="text-white text-2xl sm:text-3xl md:text-4xl font-bold">
             Checkout
           </h1>
         </div>
       </header>
 
-      <main className="max-w-5xl mx-auto px-6 py-10 w-full flex-1">
+      <main className="max-w-5xl mx-auto px-4 sm:px-6 py-6 sm:py-10 w-full flex-1">
 
         {/* ── Methods ── */}
-        <section className="bg-white rounded-2xl shadow-sm p-6 mb-6">
+        <section className="bg-white rounded-2xl shadow-sm p-4 sm:p-6 mb-4 sm:mb-6">
           <h2 className="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-4">Methods</h2>
-          <div className="flex gap-3 mb-6">
+          <div className="flex flex-col sm:flex-row gap-3 mb-5 sm:mb-6">
             <button
               onClick={() => setMethod("delivery")}
-              className={`flex items-center gap-2 px-6 py-2.5 rounded-lg border-2 font-semibold text-sm transition-colors ${
+              className={`flex items-center justify-center gap-2 px-5 py-3 rounded-lg border-2 font-semibold text-sm transition-colors ${
                 method === "delivery"
                   ? "border-green-500 bg-green-50 text-green-700"
                   : "border-gray-200 text-gray-500 hover:border-gray-300"
@@ -114,7 +113,7 @@ export default function CheckoutPage() {
             </button>
             <button
               onClick={() => setMethod("pickup")}
-              className={`flex items-center gap-2 px-6 py-2.5 rounded-lg border-2 font-semibold text-sm transition-colors ${
+              className={`flex items-center justify-center gap-2 px-5 py-3 rounded-lg border-2 font-semibold text-sm transition-colors ${
                 method === "pickup"
                   ? "border-green-500 bg-green-50 text-green-700"
                   : "border-gray-200 text-gray-500 hover:border-gray-300"
@@ -150,8 +149,8 @@ export default function CheckoutPage() {
         </section>
 
         {/* ── Items Table ── */}
-        <section className="bg-white rounded-2xl shadow-sm mb-6 overflow-hidden">
-          {/* Table header */}
+        <section className="bg-white rounded-2xl shadow-sm mb-4 sm:mb-6 overflow-hidden">
+          {/* Desktop header */}
           <div className="hidden md:grid grid-cols-[1fr_180px_90px_130px_100px_100px_32px] gap-3 px-6 py-3 border-b border-gray-100 bg-gray-50 text-xs font-semibold text-gray-500 uppercase tracking-wide">
             <span>Product</span>
             <span>Notes</span>
@@ -168,68 +167,94 @@ export default function CheckoutPage() {
             return (
               <div
                 key={item.id}
-                className={`grid grid-cols-1 md:grid-cols-[1fr_180px_90px_130px_100px_100px_32px] gap-3 items-start px-6 py-5 ${idx < items.length - 1 ? "border-b border-gray-100" : ""}`}
+                className={`px-4 sm:px-6 py-4 sm:py-5 ${idx < items.length - 1 ? "border-b border-gray-100" : ""}`}
               >
-                {/* Product */}
-                <div>
-                  <p className="font-semibold text-gray-800 text-sm">{item.name}</p>
-                  <p className="text-xs text-gray-400 capitalize mt-0.5">{item.category.replace(/-/g, " ")}</p>
+                {/* Desktop layout */}
+                <div className="hidden md:grid grid-cols-[1fr_180px_90px_130px_100px_100px_32px] gap-3 items-center">
+                  <div>
+                    <p className="font-semibold text-gray-800 text-sm">{item.name}</p>
+                    <p className="text-xs text-gray-400 capitalize mt-0.5">{item.category.replace(/-/g, " ")}</p>
+                  </div>
+                  <input
+                    type="text"
+                    placeholder="Notes"
+                    value={notes[item.id] ?? ""}
+                    onChange={(e) => updateNote(item.id, e.target.value)}
+                    className="border border-gray-200 rounded-lg px-3 py-1.5 text-xs text-gray-700 placeholder-gray-300 focus:outline-none focus:border-primary transition-colors w-full"
+                  />
+                  <p className="text-right text-sm text-gray-700 font-medium">${item.price.toFixed(2)}</p>
+                  <div className="flex items-center justify-center gap-2">
+                    <button
+                      onClick={() => item.quantity === 1 ? removeItem(item.id) : updateQty(item.id, item.quantity - 1)}
+                      className="w-8 h-8 rounded-full border-2 border-gray-200 flex items-center justify-center text-gray-500 hover:border-primary hover:text-primary transition-colors"
+                    >
+                      <MdRemove className="text-xs" />
+                    </button>
+                    <span className="w-7 text-center font-bold text-sm text-gray-800">{item.quantity}</span>
+                    <button
+                      onClick={() => updateQty(item.id, item.quantity + 1)}
+                      className="w-8 h-8 rounded-full border-2 border-gray-200 flex items-center justify-center text-gray-500 hover:border-primary hover:text-primary transition-colors"
+                    >
+                      <MdAdd className="text-xs" />
+                    </button>
+                  </div>
+                  <p className="text-right text-sm font-semibold text-gray-800">${lineTotal.toFixed(2)}</p>
+                  <p className="text-right text-sm text-gray-500">${lineTax.toFixed(2)} <span className="text-xs">(10%)</span></p>
+                  <button onClick={() => removeItem(item.id)} className="text-gray-300 hover:text-red-400 transition-colors justify-self-center">
+                    <MdClose className="text-lg" />
+                  </button>
                 </div>
 
-                {/* Notes */}
-                <input
-                  type="text"
-                  placeholder="Notes"
-                  value={notes[item.id] ?? ""}
-                  onChange={(e) => updateNote(item.id, e.target.value)}
-                  className="border border-gray-200 rounded-lg px-3 py-1.5 text-xs text-gray-700 placeholder-gray-300 focus:outline-none focus:border-primary transition-colors w-full"
-                />
-
-                {/* Price */}
-                <p className="text-right text-sm text-gray-700 font-medium md:pt-1.5">${item.price.toFixed(2)}</p>
-
-                {/* Quantity stepper */}
-                <div className="flex items-center justify-center gap-2 md:pt-1">
-                  <button
-                    onClick={() => item.quantity === 1 ? removeItem(item.id) : updateQty(item.id, item.quantity - 1)}
-                    className="w-7 h-7 rounded-full border-2 border-gray-200 flex items-center justify-center text-gray-500 hover:border-primary hover:text-primary transition-colors"
-                  >
-                    <MdRemove className="text-xs" />
-                  </button>
-                  <span className="w-7 text-center font-bold text-sm text-gray-800">{item.quantity}</span>
-                  <button
-                    onClick={() => updateQty(item.id, item.quantity + 1)}
-                    className="w-7 h-7 rounded-full border-2 border-gray-200 flex items-center justify-center text-gray-500 hover:border-primary hover:text-primary transition-colors"
-                  >
-                    <MdAdd className="text-xs" />
-                  </button>
+                {/* Mobile layout */}
+                <div className="md:hidden">
+                  <div className="flex justify-between items-start mb-2">
+                    <div>
+                      <p className="font-semibold text-gray-800 text-sm">{item.name}</p>
+                      <p className="text-xs text-gray-400 capitalize mt-0.5">{item.category.replace(/-/g, " ")}</p>
+                    </div>
+                    <button onClick={() => removeItem(item.id)} className="text-gray-300 hover:text-red-400 transition-colors p-1">
+                      <MdClose className="text-lg" />
+                    </button>
+                  </div>
+                  <input
+                    type="text"
+                    placeholder="Add notes..."
+                    value={notes[item.id] ?? ""}
+                    onChange={(e) => updateNote(item.id, e.target.value)}
+                    className="border border-gray-200 rounded-lg px-3 py-2 text-xs text-gray-700 placeholder-gray-300 focus:outline-none focus:border-primary transition-colors w-full mb-3"
+                  />
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={() => item.quantity === 1 ? removeItem(item.id) : updateQty(item.id, item.quantity - 1)}
+                        className="w-9 h-9 rounded-full border-2 border-gray-200 flex items-center justify-center text-gray-500 hover:border-primary hover:text-primary transition-colors"
+                      >
+                        <MdRemove className="text-sm" />
+                      </button>
+                      <span className="w-8 text-center font-bold text-sm text-gray-800">{item.quantity}</span>
+                      <button
+                        onClick={() => updateQty(item.id, item.quantity + 1)}
+                        className="w-9 h-9 rounded-full border-2 border-gray-200 flex items-center justify-center text-gray-500 hover:border-primary hover:text-primary transition-colors"
+                      >
+                        <MdAdd className="text-sm" />
+                      </button>
+                    </div>
+                    <div className="text-right">
+                      <p className="font-semibold text-gray-800 text-sm">${lineTotal.toFixed(2)}</p>
+                      <p className="text-xs text-gray-400">Tax: ${lineTax.toFixed(2)}</p>
+                    </div>
+                  </div>
                 </div>
-
-                {/* Total */}
-                <p className="text-right text-sm font-semibold text-gray-800 md:pt-1.5">${lineTotal.toFixed(2)}</p>
-
-                {/* Tax */}
-                <p className="text-right text-sm text-gray-500 md:pt-1.5">
-                  ${lineTax.toFixed(2)} <span className="text-xs">(10%)</span>
-                </p>
-
-                {/* Remove */}
-                <button
-                  onClick={() => removeItem(item.id)}
-                  className="text-gray-300 hover:text-red-400 transition-colors md:pt-1.5 justify-self-center"
-                >
-                  <MdClose className="text-lg" />
-                </button>
               </div>
             );
           })}
         </section>
 
-        {/* ── Summary card (discount + totals together) ── */}
-        <div className="bg-white rounded-2xl shadow-sm p-6">
-          <div className="flex flex-col md:flex-row gap-6">
+        {/* ── Summary card (discount + totals) ── */}
+        <div className="bg-white rounded-2xl shadow-sm p-4 sm:p-6">
+          <div className="flex flex-col md:flex-row gap-5 sm:gap-6">
 
-            {/* Discount code — left */}
+            {/* Discount code */}
             <div className="md:w-64 flex-shrink-0 border-b md:border-b-0 md:border-r border-gray-100 pb-5 md:pb-0 md:pr-6">
               <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-3">Discount Code</h3>
               {discountApplied ? (
@@ -265,7 +290,7 @@ export default function CheckoutPage() {
               )}
             </div>
 
-            {/* Price summary — right */}
+            {/* Price summary */}
             <div className="flex-1 flex flex-col gap-2 text-sm justify-end">
               <div className="flex justify-between text-gray-600">
                 <span>Subtotal (Incl. Tax)</span>
@@ -297,10 +322,10 @@ export default function CheckoutPage() {
         </div>
 
         {/* ── Actions ── */}
-        <div className="flex flex-col sm:flex-row items-center justify-end gap-4 mt-8">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between sm:justify-end gap-3 mt-6 sm:mt-8">
           <a
             href="/menu"
-            className="text-primary font-semibold text-sm hover:text-secondary transition-colors"
+            className="text-center text-primary font-semibold text-sm hover:text-secondary transition-colors py-2"
           >
             ← Continue Shopping
           </a>
@@ -310,7 +335,7 @@ export default function CheckoutPage() {
               if (!time) { alert("Please select a time."); return; }
               alert(`Order placed!\nMethod: ${method}\nDate: ${date}\nTime: ${time}\nTotal: AUD $${total.toFixed(2)}`);
             }}
-            className="bg-primary text-white font-semibold px-8 py-3 rounded-full text-sm hover:bg-secondary transition-colors"
+            className="bg-primary text-white font-semibold px-8 py-3 rounded-full text-sm hover:bg-secondary transition-colors text-center"
           >
             Proceed to Checkout →
           </button>
@@ -319,7 +344,7 @@ export default function CheckoutPage() {
       </main>
 
       <footer className="bg-gray-900 text-white py-6 mt-10">
-        <div className="max-w-5xl mx-auto px-6 text-center text-gray-400 text-sm">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 text-center text-gray-400 text-sm">
           © 2025 Pronto Gourmet Catering. All rights reserved.
         </div>
       </footer>

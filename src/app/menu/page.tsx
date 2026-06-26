@@ -76,7 +76,7 @@ export default function MenuPage() {
         <div className="absolute -bottom-24 -left-12 w-96 h-96 rounded-full bg-white/5" />
         <div className="absolute top-8 right-1/3 w-32 h-32 rounded-full bg-secondary/20" />
 
-        <div className="relative z-10 max-w-6xl mx-auto px-6 py-16">
+        <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 py-10 sm:py-16">
           {/* breadcrumb */}
           <p className="text-white/50 text-xs mb-4 tracking-widest uppercase">
             <a href="/" className="hover:text-white transition-colors">Home</a>
@@ -84,16 +84,16 @@ export default function MenuPage() {
             <span className="text-secondary">Our Menus</span>
           </p>
 
-          <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6">
+          <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 sm:gap-6">
             <div>
               <span className="inline-block bg-secondary text-white text-xs font-semibold px-3 py-1 rounded-full mb-4 uppercase tracking-widest">
                 Fresh · Local · Delicious
               </span>
-              <h1 className="text-white text-4xl md:text-5xl font-bold leading-tight mb-3">
+              <h1 className="text-white text-3xl sm:text-4xl md:text-5xl font-bold leading-tight mb-3">
                 Our Menu<br />
                 <span className="text-secondary">Categories</span>
               </h1>
-              <p className="text-white/70 text-base max-w-lg">
+              <p className="text-white/70 text-sm sm:text-base max-w-lg">
                 Browse our full range of catering menus — crafted fresh daily for every
                 occasion, from boardroom breakfasts to lavish event spreads.
               </p>
@@ -101,7 +101,7 @@ export default function MenuPage() {
 
             <a
               href="/#quote"
-              className="flex items-center gap-2 self-start md:self-auto bg-secondary text-white font-semibold px-6 py-3 rounded-full text-sm hover:opacity-90 transition-opacity whitespace-nowrap"
+              className="flex items-center gap-2 self-start md:self-auto bg-secondary text-white font-semibold px-5 py-2.5 rounded-full text-sm hover:opacity-90 transition-opacity whitespace-nowrap"
             >
               <MdOutlineRequestQuote className="text-lg" />
               Request a Quote
@@ -109,7 +109,7 @@ export default function MenuPage() {
           </div>
 
           {/* stat strip */}
-          <div className="flex flex-wrap gap-8 mt-10 pt-8 border-t border-white/10">
+          <div className="flex flex-wrap gap-4 sm:gap-8 mt-8 sm:mt-10 pt-6 sm:pt-8 border-t border-white/10">
             {[
               { value: "12+", label: "Menu Categories" },
               { value: "100+", label: "Individual Items" },
@@ -117,7 +117,7 @@ export default function MenuPage() {
               { value: "24hr", label: "Notice Available" },
             ].map((s) => (
               <div key={s.label}>
-                <p className="text-secondary text-2xl font-bold">{s.value}</p>
+                <p className="text-secondary text-xl sm:text-2xl font-bold">{s.value}</p>
                 <p className="text-white/60 text-xs uppercase tracking-wide">{s.label}</p>
               </div>
             ))}
@@ -126,8 +126,8 @@ export default function MenuPage() {
       </header>
 
       {/* ── Category Grid ── */}
-      <main className="max-w-6xl mx-auto px-6 py-14 w-full">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <main className="max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-14 w-full">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
           {categories.map((cat) => (
             <a
               key={cat.name}

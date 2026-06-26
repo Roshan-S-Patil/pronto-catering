@@ -100,30 +100,30 @@ export default function Home() {
         </div>
 
         {/* Content — left aligned */}
-        <div className="relative z-10 max-w-6xl mx-auto px-6 py-20 w-full">
+        <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 py-16 sm:py-20 w-full">
           <div className="max-w-lg">
             <p className="text-secondary text-xs uppercase tracking-widest font-semibold mb-3">
               Perth&apos;s Trusted Catering Specialists
             </p>
-            <h1 className="text-white text-3xl md:text-5xl font-bold leading-tight mb-4">
+            <h1 className="text-white text-2xl sm:text-3xl md:text-5xl font-bold leading-tight mb-4">
               Catering That Makes
               <br />
               Every Event Memorable
             </h1>
-            <p className="text-white/75 text-base md:text-lg max-w-md mb-8">
+            <p className="text-white/75 text-sm sm:text-base md:text-lg max-w-md mb-8">
               From intimate gatherings to large corporate functions — fresh,
               delicious food delivered on time, every time across Perth Metro.
             </p>
-            <div className="flex flex-wrap gap-3">
+            <div className="flex flex-col sm:flex-row flex-wrap gap-3">
               <a
                 href="/menu"
-                className="flex items-center gap-2 border-2 border-white text-white px-6 py-3 rounded-full font-semibold text-sm hover:bg-white hover:text-primary transition-colors"
+                className="flex items-center justify-center gap-2 border-2 border-white text-white px-5 py-3 rounded-full font-semibold text-sm hover:bg-white hover:text-primary transition-colors"
               >
                 <MdRestaurantMenu className="text-base" /> View Our Menu
               </a>
               <a
                 href="#quote"
-                className="flex items-center gap-2 bg-secondary text-white px-6 py-3 rounded-full font-semibold text-sm hover:opacity-90 transition-opacity"
+                className="flex items-center justify-center gap-2 bg-secondary text-white px-5 py-3 rounded-full font-semibold text-sm hover:opacity-90 transition-opacity"
               >
                 <MdOutlineRequestQuote className="text-base" /> Request a Quote
               </a>
@@ -133,16 +133,16 @@ export default function Home() {
       </section>
 
       {/* ── Why Choose Pronto ── */}
-      <section id="why-us" className="py-20 bg-gray-50">
-        <div className="max-w-6xl mx-auto px-6">
-          <h2 className="text-center text-primary text-3xl md:text-4xl font-bold mb-4">
+      <section id="why-us" className="py-12 sm:py-20 bg-gray-50">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6">
+          <h2 className="text-center text-primary text-2xl sm:text-3xl md:text-4xl font-bold mb-4">
             Why Choose Pronto Gourmet Catering?
           </h2>
-          <p className="text-center text-gray-500 mb-12 max-w-2xl mx-auto">
+          <p className="text-center text-gray-500 mb-8 sm:mb-12 max-w-2xl mx-auto text-sm sm:text-base">
             We&apos;ve been helping Perth businesses and families celebrate with
             exceptional food since day one.
           </p>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
             {whyChoose.map((item) => (
               <div
                 key={item.title}
@@ -162,37 +162,37 @@ export default function Home() {
       </section>
 
       {/* ── 2 Action Cards ── */}
-      <section id="menu" className="py-20 bg-white">
-        <div className="max-w-4xl mx-auto px-6">
-          <h2 className="text-center text-primary text-3xl font-bold mb-12">
+      <section id="menu" className="py-12 sm:py-20 bg-white">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6">
+          <h2 className="text-center text-primary text-2xl sm:text-3xl font-bold mb-8 sm:mb-12">
             Ready to Get Started?
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div className="bg-primary rounded-2xl p-10 text-white text-center flex flex-col items-center">
-              <h3 className="text-2xl font-bold mb-3">Check Our Menu</h3>
-              <p className="text-white/80 mb-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="bg-primary rounded-2xl p-7 sm:p-10 text-white text-center flex flex-col items-center">
+              <h3 className="text-xl sm:text-2xl font-bold mb-3">Check Our Menu</h3>
+              <p className="text-white/80 mb-6 text-sm sm:text-base">
                 Browse our range of fresh, seasonal menus crafted for every
                 occasion.
               </p>
               <a
                 href="/menu"
-                className="bg-white text-primary font-semibold px-6 py-3 rounded-full hover:bg-secondary hover:text-white transition-colors"
+                className="bg-white text-primary font-semibold px-6 py-3 rounded-full hover:bg-secondary hover:text-white transition-colors text-sm"
               >
                 View Menu
               </a>
             </div>
             <div
               id="quote"
-              className="bg-secondary rounded-2xl p-10 text-white text-center flex flex-col items-center"
+              className="bg-secondary rounded-2xl p-7 sm:p-10 text-white text-center flex flex-col items-center"
             >
-              <h3 className="text-2xl font-bold mb-3">Request a Quote</h3>
-              <p className="text-white/80 mb-6">
+              <h3 className="text-xl sm:text-2xl font-bold mb-3">Request a Quote</h3>
+              <p className="text-white/80 mb-6 text-sm sm:text-base">
                 Tell us about your event and we&apos;ll put together a
                 personalised catering package.
               </p>
               <a
                 href="/quote"
-                className="bg-white text-secondary font-semibold px-6 py-3 rounded-full hover:bg-primary hover:text-white transition-colors"
+                className="bg-white text-secondary font-semibold px-6 py-3 rounded-full hover:bg-primary hover:text-white transition-colors text-sm"
               >
                 Get a Quote
               </a>
@@ -202,12 +202,12 @@ export default function Home() {
       </section>
 
       {/* ── CTA Band ── */}
-      <section className="py-20 bg-primary text-white">
-        <div className="max-w-4xl mx-auto px-6 text-center">
-          <h2 className="text-3xl md:text-4xl font-bold mb-6">
+      <section className="py-12 sm:py-20 bg-primary text-white">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 sm:mb-6">
             Corporate, Party &amp; Event Catering Specialists in Perth
           </h2>
-          <p className="text-white/80 text-lg max-w-3xl mx-auto mb-8">
+          <p className="text-white/80 text-sm sm:text-lg max-w-3xl mx-auto mb-6 sm:mb-8">
             Whether it&apos;s a boardroom lunch, a school fete, a wedding
             reception, or a backyard birthday — Pronto Gourmet Catering brings
             the same commitment to quality and service to every event, big or
@@ -215,7 +215,7 @@ export default function Home() {
           </p>
           <a
             href="/quote"
-            className="inline-block bg-secondary text-white font-semibold px-8 py-4 rounded-full text-lg hover:opacity-90 transition-opacity"
+            className="inline-block bg-secondary text-white font-semibold px-6 sm:px-8 py-3 sm:py-4 rounded-full text-sm sm:text-lg hover:opacity-90 transition-opacity"
           >
             Start Planning Your Event
           </a>
@@ -223,9 +223,9 @@ export default function Home() {
       </section>
 
       {/* ── Footer ── */}
-      <footer className="bg-gray-900 text-white py-12">
-        <div className="max-w-6xl mx-auto px-6">
-          <div className="flex flex-col md:flex-row justify-between items-start gap-8">
+      <footer className="bg-gray-900 text-white py-10 sm:py-12">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6">
+          <div className="flex flex-col md:flex-row justify-between items-start gap-6 sm:gap-8">
             <div>
               <Image
                 src="/logo.jpg"
