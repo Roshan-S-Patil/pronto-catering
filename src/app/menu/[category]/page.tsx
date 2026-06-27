@@ -416,7 +416,7 @@ export default function CategoryPage({ params }: { params: Promise<{ category: s
               {visible.map((item) => {
                 const dietaryDetails = DIETARY_TAGS.filter((t) => item.dietary.includes(t.key));
                 const cartItem = items.find((i) => i.id === item.id);
-                const inCart = !!cartItem;
+                const qty = cartItem?.quantity ?? 1;
                 return (
                   <div key={item.id} className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-shadow duration-300 flex flex-col">
                     {/* Image */}
@@ -444,30 +444,34 @@ export default function CategoryPage({ params }: { params: Promise<{ category: s
                         </div>
                       )}
 
-                      {inCart ? (
-                        <div className="flex items-center justify-between mt-auto bg-gray-100 rounded-full px-2 py-1">
+                      <div className="flex items-center gap-2 mt-auto">
+                        {/* Qty stepper */}
+                        <div className="flex items-center bg-gray-100 rounded-full px-1.5 py-1 gap-1">
                           <button
-                            onClick={() => cartItem.quantity === 1 ? removeItem(item.id) : updateQty(item.id, cartItem.quantity - 1)}
-                            className="w-7 h-7 rounded-full bg-white shadow flex items-center justify-center text-primary hover:bg-primary hover:text-white transition-colors"
+                            onClick={() => cartItem ? (qty === 1 ? removeItem(item.id) : updateQty(item.id, qty - 1)) : null}
+                            disabled={!cartItem}
+                            className="w-6 h-6 rounded-full bg-white shadow flex items-center justify-center text-primary hover:bg-primary hover:text-white transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
                           >
-                            <MdRemove className="text-sm" />
+                            <MdRemove className="text-xs" />
                           </button>
-                          <span className="font-bold text-sm text-gray-800 w-6 text-center">{cartItem.quantity}</span>
+                          <span className="font-bold text-sm text-gray-800 w-5 text-center">{qty}</span>
                           <button
-                            onClick={() => updateQty(item.id, cartItem.quantity + 1)}
-                            className="w-7 h-7 rounded-full bg-primary text-white flex items-center justify-center hover:bg-secondary transition-colors"
+                            onClick={() => cartItem ? updateQty(item.id, qty + 1) : null}
+                            disabled={!cartItem}
+                            className="w-6 h-6 rounded-full bg-primary text-white flex items-center justify-center hover:bg-secondary transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
                           >
-                            <MdAdd className="text-sm" />
+                            <MdAdd className="text-xs" />
                           </button>
                         </div>
-                      ) : (
+
+                        {/* Add to Cart */}
                         <button
                           onClick={() => addItem({ id: item.id, name: item.name, price: item.price, img: item.img, category: item.category, dietary: item.dietary })}
-                          className="w-full flex items-center justify-center gap-2 bg-primary text-white font-semibold text-sm py-2 rounded-full hover:bg-secondary transition-colors mt-auto"
+                          className={`flex-1 flex items-center justify-center gap-1.5 font-semibold text-sm py-2 rounded-full transition-colors ${cartItem ? "bg-green-500 text-white hover:bg-green-600" : "bg-primary text-white hover:bg-secondary"}`}
                         >
-                          <MdShoppingCart className="text-base" /> Add to Cart
+                          {cartItem ? <><MdCheck className="text-sm" /> Added</> : <><MdShoppingCart className="text-sm" /> Add to Cart</>}
                         </button>
-                      )}
+                      </div>
                     </div>
                   </div>
                 );
