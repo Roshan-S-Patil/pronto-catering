@@ -104,9 +104,11 @@ const ITEMS: Item[] = [
 
 function DietaryPill({ tag }: { tag: DietaryTag }) {
   return (
-    <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold ${tag.bg} ${tag.text}`}>
-      <span className="font-bold">{tag.abbrev}</span>
-      <span className="hidden sm:inline">{tag.label}</span>
+    <span
+      title={tag.label}
+      className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-bold cursor-default ${tag.bg} ${tag.text}`}
+    >
+      {tag.abbrev}
     </span>
   );
 }
@@ -420,16 +422,13 @@ export default function CategoryPage({ params }: { params: Promise<{ category: s
                         alt={item.name}
                         className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
                       />
-                      {/* Price badge */}
-                      <span className="absolute top-3 right-3 bg-secondary text-white text-xs font-bold px-2.5 py-1 rounded-full shadow">
-                        ${item.price.toFixed(2)}
-                      </span>
                     </div>
 
                     {/* Body */}
                     <div className="p-5 flex flex-col flex-1">
                       <h3 className="text-primary font-bold text-base mb-1">{item.name}</h3>
-                      <p className="text-gray-500 text-sm mb-3 flex-1">{item.desc}</p>
+                      <p className="text-gray-500 text-sm mb-2 flex-1">{item.desc}</p>
+                      <p className="text-secondary font-bold text-base mb-3">${item.price.toFixed(2)}</p>
 
                       {/* Dietary pills */}
                       {dietaryDetails.length > 0 && (
@@ -440,8 +439,8 @@ export default function CategoryPage({ params }: { params: Promise<{ category: s
                         </div>
                       )}
 
-                      <button className="w-full border-2 border-primary text-primary font-semibold text-sm py-2 rounded-full hover:bg-primary hover:text-white transition-colors mt-auto">
-                        Add to Enquiry →
+                      <button className="w-full bg-primary text-white font-semibold text-sm py-2 rounded-full hover:bg-secondary transition-colors mt-auto">
+                        Add to Cart
                       </button>
                     </div>
                   </div>
