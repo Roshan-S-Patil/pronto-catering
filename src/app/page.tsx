@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { MdRestaurantMenu, MdOutlineRequestQuote } from "react-icons/md";
 
 const whyChoose = [
   {
@@ -50,10 +51,12 @@ export default function Home() {
             <Image src="/logo.jpg" alt="Pronto Catering" width={110} height={42} style={{ width: 110, height: "auto" }} priority />
           </a>
           <div className="hidden md:flex items-center gap-6 text-xs font-medium">
-            <a href="#menu" className="text-primary hover:text-secondary transition-colors">Menu</a>
+            <a href="#menu" className="flex items-center gap-1 text-primary hover:text-secondary transition-colors">
+              <MdRestaurantMenu className="text-base" /> Menu
+            </a>
             <a href="#why-us" className="text-primary hover:text-secondary transition-colors">Why Us</a>
-            <a href="#quote" className="text-secondary border border-secondary px-4 py-1.5 rounded-full hover:bg-secondary hover:text-white transition-colors">
-              Get a Quote
+            <a href="#quote" className="flex items-center gap-1 text-secondary border border-secondary px-4 py-1.5 rounded-full hover:bg-secondary hover:text-white transition-colors">
+              <MdOutlineRequestQuote className="text-base" /> Get a Quote
             </a>
           </div>
         </div>
@@ -91,16 +94,16 @@ export default function Home() {
             </p>
             <div className="flex flex-wrap gap-3">
               <a
-                href="#quote"
-                className="bg-secondary text-white px-6 py-3 rounded-full font-semibold text-sm hover:opacity-90 transition-opacity"
+                href="#menu"
+                className="flex items-center gap-2 border-2 border-white text-white px-6 py-3 rounded-full font-semibold text-sm hover:bg-white hover:text-primary transition-colors"
               >
-                Request a Quote
+                <MdRestaurantMenu className="text-base" /> View Our Menu
               </a>
               <a
-                href="#menu"
-                className="border-2 border-white text-white px-6 py-3 rounded-full font-semibold text-sm hover:bg-white hover:text-primary transition-colors"
+                href="#quote"
+                className="flex items-center gap-2 bg-secondary text-white px-6 py-3 rounded-full font-semibold text-sm hover:opacity-90 transition-opacity"
               >
-                View Our Menu
+                <MdOutlineRequestQuote className="text-base" /> Request a Quote
               </a>
             </div>
           </div>
