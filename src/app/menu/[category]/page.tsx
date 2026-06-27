@@ -4,6 +4,7 @@ import { use, useState, useEffect, useRef } from "react";
 import Navbar from "@/components/Navbar";
 import { MdFilterList, MdSearch, MdClose, MdOutlineRequestQuote, MdShoppingCart, MdCheck } from "react-icons/md";
 import { useCart } from "@/context/CartContext";
+import { MdAdd, MdRemove } from "react-icons/md";
 
 // ── Types ──────────────────────────────────────────────────────────────────
 
@@ -124,7 +125,7 @@ export default function CategoryPage({ params }: { params: Promise<{ category: s
   const { category: slug } = use(params);
 
   const categoryName = CATEGORIES.find((c) => toSlug(c) === slug) ?? slug.replace(/-/g, " ");
-  const { addItem, items } = useCart();
+  const { addItem, items, updateQty, removeItem } = useCart();
 
   // filter state
   const [popoverOpen, setPopoverOpen] = useState(false);
@@ -414,7 +415,8 @@ export default function CategoryPage({ params }: { params: Promise<{ category: s
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {visible.map((item) => {
                 const dietaryDetails = DIETARY_TAGS.filter((t) => item.dietary.includes(t.key));
-                const inCart = items.some((i) => i.id === item.id);
+                const cartItem = items.find((i) => i.id === item.id);
+                const inCart = !!cartItem;
                 return (
                   <div key={item.id} className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-shadow duration-300 flex flex-col">
                     {/* Image */}
@@ -442,12 +444,30 @@ export default function CategoryPage({ params }: { params: Promise<{ category: s
                         </div>
                       )}
 
-                      <button
-                        onClick={() => addItem({ id: item.id, name: item.name, price: item.price, img: item.img, category: item.category, dietary: item.dietary })}
-                        className={`w-full flex items-center justify-center gap-2 font-semibold text-sm py-2 rounded-full transition-colors mt-auto ${inCart ? "bg-green-500 text-white hover:bg-green-600" : "bg-primary text-white hover:bg-secondary"}`}
-                      >
-                        {inCart ? <><MdCheck className="text-base" /> Added</> : <><MdShoppingCart className="text-base" /> Add to Cart</>}
-                      </button>
+                      {inCart ? (
+                        <div className="flex items-center justify-between mt-auto bg-gray-100 rounded-full px-2 py-1">
+                          <button
+                            onClick={() => cartItem.quantity === 1 ? removeItem(item.id) : updateQty(item.id, cartItem.quantity - 1)}
+                            className="w-7 h-7 rounded-full bg-white shadow flex items-center justify-center text-primary hover:bg-primary hover:text-white transition-colors"
+                          >
+                            <MdRemove className="text-sm" />
+                          </button>
+                          <span className="font-bold text-sm text-gray-800 w-6 text-center">{cartItem.quantity}</span>
+                          <button
+                            onClick={() => updateQty(item.id, cartItem.quantity + 1)}
+                            className="w-7 h-7 rounded-full bg-primary text-white flex items-center justify-center hover:bg-secondary transition-colors"
+                          >
+                            <MdAdd className="text-sm" />
+                          </button>
+                        </div>
+                      ) : (
+                        <button
+                          onClick={() => addItem({ id: item.id, name: item.name, price: item.price, img: item.img, category: item.category, dietary: item.dietary })}
+                          className="w-full flex items-center justify-center gap-2 bg-primary text-white font-semibold text-sm py-2 rounded-full hover:bg-secondary transition-colors mt-auto"
+                        >
+                          <MdShoppingCart className="text-base" /> Add to Cart
+                        </button>
+                      )}
                     </div>
                   </div>
                 );
