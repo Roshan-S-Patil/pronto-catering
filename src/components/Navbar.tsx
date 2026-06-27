@@ -16,7 +16,7 @@ export default function Navbar() {
           />
         </a>
         <div className="hidden md:flex items-center gap-6 text-xs font-medium">
-          <a href="/#menu" className="flex items-center gap-1 text-primary hover:text-secondary transition-colors">
+          <a href="/menu" className="flex items-center gap-1 text-primary hover:text-secondary transition-colors">
             <MdRestaurantMenu className="text-base" /> Menu
           </a>
           <a href="/#why-us" className="text-primary hover:text-secondary transition-colors">Why Us</a>
