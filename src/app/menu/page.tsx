@@ -131,7 +131,7 @@ export default function MenuPage() {
           {categories.map((cat) => (
             <a
               key={cat.name}
-              href="#"
+              href={`/menu/${cat.name.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`}
               className="group relative rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-shadow duration-300 bg-white"
             >
               {/* image */}
