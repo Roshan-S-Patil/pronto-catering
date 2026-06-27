@@ -2,7 +2,8 @@
 
 import { use, useState, useEffect, useRef } from "react";
 import Navbar from "@/components/Navbar";
-import { MdFilterList, MdSearch, MdClose, MdOutlineRequestQuote } from "react-icons/md";
+import { MdFilterList, MdSearch, MdClose, MdOutlineRequestQuote, MdShoppingCart, MdCheck } from "react-icons/md";
+import { useCart } from "@/context/CartContext";
 
 // ── Types ──────────────────────────────────────────────────────────────────
 
@@ -123,6 +124,7 @@ export default function CategoryPage({ params }: { params: Promise<{ category: s
   const { category: slug } = use(params);
 
   const categoryName = CATEGORIES.find((c) => toSlug(c) === slug) ?? slug.replace(/-/g, " ");
+  const { addItem, items } = useCart();
 
   // filter state
   const [popoverOpen, setPopoverOpen] = useState(false);
@@ -412,6 +414,7 @@ export default function CategoryPage({ params }: { params: Promise<{ category: s
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {visible.map((item) => {
                 const dietaryDetails = DIETARY_TAGS.filter((t) => item.dietary.includes(t.key));
+                const inCart = items.some((i) => i.id === item.id);
                 return (
                   <div key={item.id} className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-shadow duration-300 flex flex-col">
                     {/* Image */}
@@ -439,8 +442,11 @@ export default function CategoryPage({ params }: { params: Promise<{ category: s
                         </div>
                       )}
 
-                      <button className="w-full bg-primary text-white font-semibold text-sm py-2 rounded-full hover:bg-secondary transition-colors mt-auto">
-                        Add to Cart
+                      <button
+                        onClick={() => addItem({ id: item.id, name: item.name, price: item.price, img: item.img, category: item.category, dietary: item.dietary })}
+                        className={`w-full flex items-center justify-center gap-2 font-semibold text-sm py-2 rounded-full transition-colors mt-auto ${inCart ? "bg-green-500 text-white hover:bg-green-600" : "bg-primary text-white hover:bg-secondary"}`}
+                      >
+                        {inCart ? <><MdCheck className="text-base" /> Added</> : <><MdShoppingCart className="text-base" /> Add to Cart</>}
                       </button>
                     </div>
                   </div>
