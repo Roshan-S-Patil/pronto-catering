@@ -134,11 +134,10 @@ export default function CartPage() {
                 </div>
 
                 <a
-                  href="/#quote"
+                  href="/checkout"
                   className="flex items-center justify-center gap-2 w-full bg-secondary text-white font-semibold py-3 rounded-full hover:opacity-90 transition-opacity text-sm"
                 >
-                  <MdOutlineRequestQuote className="text-base" />
-                  Request a Quote
+                  Proceed to Checkout →
                 </a>
                 <a
                   href="/menu"
