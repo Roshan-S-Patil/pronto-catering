@@ -225,12 +225,12 @@ export default function CheckoutPage() {
           })}
         </section>
 
-        {/* ── Bottom row: Discount + Summary ── */}
-        <div className="flex flex-col md:flex-row gap-6 items-start">
+        {/* ── Summary card (discount + totals together) ── */}
+        <div className="bg-white rounded-2xl shadow-sm p-6">
+          <div className="flex flex-col md:flex-row gap-6">
 
-          {/* Discount code */}
-          <div className="w-full md:w-64">
-            <div className="bg-white rounded-2xl shadow-sm p-5">
+            {/* Discount code — left */}
+            <div className="md:w-64 flex-shrink-0 border-b md:border-b-0 md:border-r border-gray-100 pb-5 md:pb-0 md:pr-6">
               <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-3">Discount Code</h3>
               {discountApplied ? (
                 <div className="flex items-center justify-between bg-green-50 border border-green-200 rounded-lg px-3 py-2">
@@ -250,11 +250,11 @@ export default function CheckoutPage() {
                       onChange={(e) => { setDiscountInput(e.target.value); setDiscountError(""); }}
                       onKeyDown={(e) => e.key === "Enter" && applyDiscount()}
                       placeholder="Enter code"
-                      className="flex-1 border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-primary transition-colors uppercase"
+                      className="flex-1 min-w-0 border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-primary transition-colors uppercase"
                     />
                     <button
                       onClick={applyDiscount}
-                      className="bg-primary text-white text-sm font-semibold px-4 py-2 rounded-lg hover:bg-secondary transition-colors"
+                      className="bg-primary text-white text-sm font-semibold px-4 py-2 rounded-lg hover:bg-secondary transition-colors whitespace-nowrap"
                     >
                       Apply
                     </button>
@@ -264,11 +264,9 @@ export default function CheckoutPage() {
                 </>
               )}
             </div>
-          </div>
 
-          {/* Price summary */}
-          <div className="flex-1 bg-white rounded-2xl shadow-sm p-5">
-            <div className="flex flex-col gap-2 text-sm">
+            {/* Price summary — right */}
+            <div className="flex-1 flex flex-col gap-2 text-sm justify-end">
               <div className="flex justify-between text-gray-600">
                 <span>Subtotal (Incl. Tax)</span>
                 <span className="font-medium">${subtotal.toFixed(2)}</span>
@@ -289,11 +287,12 @@ export default function CheckoutPage() {
                 <span>Tax 10%</span>
                 <span className="font-medium">${tax.toFixed(2)}</span>
               </div>
-              <div className="flex justify-between font-bold text-base pt-2 border-t border-gray-100 mt-1">
+              <div className="flex justify-between font-bold text-base pt-3 border-t border-gray-100 mt-1">
                 <span className="text-gray-800">Total</span>
-                <span className="text-secondary">AUD ${total.toFixed(2)}</span>
+                <span className="text-secondary text-lg">AUD ${total.toFixed(2)}</span>
               </div>
             </div>
+
           </div>
         </div>
 
