@@ -45,14 +45,14 @@ export default function Home() {
 
       {/* ── Navbar ── */}
       <nav className="sticky top-0 z-50 bg-white shadow-sm">
-        <div className="max-w-6xl mx-auto px-6 py-3 flex items-center justify-between">
+        <div className="max-w-6xl mx-auto px-4 py-2 flex items-center justify-between">
           <a href="/">
-            <Image src="/logo.jpg" alt="Pronto Catering" width={160} height={60} style={{ width: 160, height: "auto" }} priority />
+            <Image src="/logo.jpg" alt="Pronto Catering" width={110} height={42} style={{ width: 110, height: "auto" }} priority />
           </a>
-          <div className="hidden md:flex items-center gap-8 text-sm font-medium">
+          <div className="hidden md:flex items-center gap-6 text-xs font-medium">
             <a href="#menu" className="text-primary hover:text-secondary transition-colors">Menu</a>
             <a href="#why-us" className="text-primary hover:text-secondary transition-colors">Why Us</a>
-            <a href="#quote" className="text-secondary border border-secondary px-5 py-2 rounded-full hover:bg-secondary hover:text-white transition-colors">
+            <a href="#quote" className="text-secondary border border-secondary px-4 py-1.5 rounded-full hover:bg-secondary hover:text-white transition-colors">
               Get a Quote
             </a>
           </div>
@@ -60,31 +60,49 @@ export default function Home() {
       </nav>
 
       {/* ── Hero ── */}
-      <section className="relative w-full min-h-screen bg-gradient-to-br from-primary to-[#023f75] flex items-center">
-        <div className="max-w-6xl mx-auto px-6 py-24 text-center">
-          <p className="text-secondary text-sm uppercase tracking-widest font-semibold mb-4">
-            Perth&apos;s Trusted Catering Specialists
-          </p>
-          <h1 className="text-white text-4xl md:text-6xl font-bold leading-tight mb-6">
-            Catering That Makes<br />Every Event Memorable
-          </h1>
-          <p className="text-white/80 text-lg md:text-xl max-w-2xl mx-auto mb-10">
-            From intimate gatherings to large corporate functions — fresh, delicious food
-            delivered on time, every time across Perth Metro.
-          </p>
-          <div className="flex flex-wrap gap-4 justify-center">
-            <a
-              href="#quote"
-              className="bg-secondary text-white px-8 py-4 rounded-full font-semibold text-lg hover:opacity-90 transition-opacity"
-            >
-              Request a Quote
-            </a>
-            <a
-              href="#menu"
-              className="border-2 border-white text-white px-8 py-4 rounded-full font-semibold text-lg hover:bg-white hover:text-primary transition-colors"
-            >
-              View Our Menu
-            </a>
+      <section className="relative w-full min-h-screen bg-black flex items-center overflow-hidden">
+        {/* Food image — right half, fading into black on the left */}
+        <div className="absolute inset-0 flex">
+          <div className="absolute right-0 top-0 w-full h-full md:w-3/5">
+            <Image
+              src="/partyfood.webp"
+              alt=""
+              fill
+              className="object-cover object-center"
+              priority
+            />
+            {/* Fade: fully black on left edge, transparent on right */}
+            <div className="absolute inset-0 bg-gradient-to-r from-black via-black/80 to-transparent" />
+          </div>
+        </div>
+
+        {/* Content — left aligned */}
+        <div className="relative z-10 max-w-6xl mx-auto px-6 py-20 w-full">
+          <div className="max-w-lg">
+            <p className="text-secondary text-xs uppercase tracking-widest font-semibold mb-3">
+              Perth&apos;s Trusted Catering Specialists
+            </p>
+            <h1 className="text-white text-3xl md:text-5xl font-bold leading-tight mb-4">
+              Catering That Makes<br />Every Event Memorable
+            </h1>
+            <p className="text-white/75 text-base md:text-lg max-w-md mb-8">
+              From intimate gatherings to large corporate functions — fresh, delicious food
+              delivered on time, every time across Perth Metro.
+            </p>
+            <div className="flex flex-wrap gap-3">
+              <a
+                href="#quote"
+                className="bg-secondary text-white px-6 py-3 rounded-full font-semibold text-sm hover:opacity-90 transition-opacity"
+              >
+                Request a Quote
+              </a>
+              <a
+                href="#menu"
+                className="border-2 border-white text-white px-6 py-3 rounded-full font-semibold text-sm hover:bg-white hover:text-primary transition-colors"
+              >
+                View Our Menu
+              </a>
+            </div>
           </div>
         </div>
       </section>
