@@ -83,9 +83,9 @@ export default function Home() {
       <Navbar />
 
       {/* ── Hero ── */}
-      <section className="relative w-full min-h-screen bg-black flex items-center overflow-hidden">
+      <section className="relative w-full bg-black flex items-center overflow-hidden min-h-[320px] md:min-h-screen">
         {/* Food image — right half, fading into black on the left */}
-        <div className="absolute inset-0 flex">
+        <div className="absolute inset-0">
           <div className="absolute right-0 top-0 w-full h-full md:w-3/5">
             <Image
               src="/partyfood.webp"
@@ -99,33 +99,33 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Content — left aligned */}
-        <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 py-16 sm:py-20 w-full">
+        {/* Content — left aligned, compact on mobile */}
+        <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 py-10 sm:py-16 md:py-20 w-full">
           <div className="max-w-lg">
-            <p className="text-secondary text-xs uppercase tracking-widest font-semibold mb-3">
+            <p className="text-secondary text-xs uppercase tracking-widest font-semibold mb-2 sm:mb-3">
               Perth&apos;s Trusted Catering Specialists
             </p>
-            <h1 className="text-white text-2xl sm:text-3xl md:text-5xl font-bold leading-tight mb-4">
+            <h1 className="text-white text-xl sm:text-3xl md:text-5xl font-bold leading-tight mb-3 sm:mb-4">
               Catering That Makes
               <br />
               Every Event Memorable
             </h1>
-            <p className="text-white/75 text-sm sm:text-base md:text-lg max-w-md mb-8">
+            <p className="text-white/75 text-xs sm:text-base md:text-lg max-w-md mb-5 sm:mb-8 hidden sm:block">
               From intimate gatherings to large corporate functions — fresh,
               delicious food delivered on time, every time across Perth Metro.
             </p>
-            <div className="flex flex-col sm:flex-row flex-wrap gap-3">
+            <div className="flex flex-row flex-wrap gap-2 sm:gap-3">
               <a
                 href="/menu"
-                className="flex items-center justify-center gap-2 border-2 border-white text-white px-5 py-3 rounded-full font-semibold text-sm hover:bg-white hover:text-primary transition-colors"
+                className="flex items-center gap-1.5 border-2 border-white text-white px-4 py-2 sm:px-5 sm:py-3 rounded-full font-semibold text-xs sm:text-sm hover:bg-white hover:text-primary transition-colors whitespace-nowrap"
               >
-                <MdRestaurantMenu className="text-base" /> View Our Menu
+                <MdRestaurantMenu className="text-sm sm:text-base" /> View Our Menu
               </a>
               <a
                 href="#quote"
-                className="flex items-center justify-center gap-2 bg-secondary text-white px-5 py-3 rounded-full font-semibold text-sm hover:opacity-90 transition-opacity"
+                className="flex items-center gap-1.5 bg-secondary text-white px-4 py-2 sm:px-5 sm:py-3 rounded-full font-semibold text-xs sm:text-sm hover:opacity-90 transition-opacity whitespace-nowrap"
               >
-                <MdOutlineRequestQuote className="text-base" /> Request a Quote
+                <MdOutlineRequestQuote className="text-sm sm:text-base" /> Request a Quote
               </a>
             </div>
           </div>
