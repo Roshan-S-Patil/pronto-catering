@@ -4,12 +4,15 @@ import { useState } from "react";
 import Image from "next/image";
 import { MdRestaurantMenu, MdOutlineRequestQuote, MdShoppingCart, MdMenu, MdClose, MdPerson, MdStar } from "react-icons/md";
 import { useCart } from "@/context/CartContext";
+import AnnouncementBar from "./AnnouncementBar";
 
 export default function Navbar() {
   const { totalItems } = useCart();
   const [open, setOpen] = useState(false);
 
   return (
+    <>
+    <AnnouncementBar />
     <nav className="sticky top-0 z-50 bg-white shadow-sm">
       <div className="max-w-6xl mx-auto px-4 py-2 flex items-center justify-between">
         {/* Logo */}
@@ -90,5 +93,6 @@ export default function Navbar() {
         </div>
       )}
     </nav>
+    </>
   );
 }

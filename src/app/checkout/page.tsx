@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Navbar from "@/components/Navbar";
 import { useCart } from "@/context/CartContext";
 import { MdAdd, MdRemove, MdClose, MdLocalShipping, MdStorefront, MdDiscount } from "react-icons/md";
+import { freeQty, offerDiscount, OFFER_COLOURS, OFFER_LABELS } from "@/lib/offers";
 
 const DELIVERY_FEE = 22.0;
 const TAX_DIVISOR = 11;
@@ -54,7 +55,9 @@ export default function CheckoutPage() {
     setDiscountError("");
   }
 
-  const subtotal = items.reduce((s, i) => s + i.price * i.quantity, 0);
+  const grossSubtotal = items.reduce((s, i) => s + i.price * i.quantity, 0);
+  const offerSavings = items.reduce((s, i) => s + offerDiscount(i.offer, i.price, i.quantity), 0);
+  const subtotal = grossSubtotal - offerSavings;
   const deliveryFee = method === "delivery" ? DELIVERY_FEE : 0;
   const discountAmount = subtotal * discountRate;
   const total = subtotal + deliveryFee - discountAmount;
@@ -165,7 +168,9 @@ export default function CheckoutPage() {
           </div>
 
           {items.map((item, idx) => {
-            const lineTotal = item.price * item.quantity;
+            const itemSaving = offerDiscount(item.offer, item.price, item.quantity);
+            const free = freeQty(item.offer, item.quantity);
+            const lineTotal = item.price * item.quantity - itemSaving;
             const lineTax = lineTotal / TAX_DIVISOR;
             return (
               <div
@@ -177,6 +182,17 @@ export default function CheckoutPage() {
                   <div>
                     <p className="font-semibold text-gray-800 text-sm">{item.name}</p>
                     <p className="text-xs text-gray-400 capitalize mt-0.5">{item.category.replace(/-/g, " ")}</p>
+                    {item.offer && (
+                      <div className="flex items-center gap-1.5 mt-1">
+                        <span className={`inline-flex items-center px-1.5 py-0.5 rounded-full text-[10px] font-bold ${OFFER_COLOURS[item.offer]}`}
+                          title={OFFER_LABELS[item.offer]}>
+                          {item.offer}
+                        </span>
+                        {free > 0 && (
+                          <span className="text-[10px] text-emerald-600 font-medium">🎁 {free} free · −${itemSaving.toFixed(2)}</span>
+                        )}
+                      </div>
+                    )}
                   </div>
                   <input
                     type="text"
@@ -201,7 +217,12 @@ export default function CheckoutPage() {
                       <MdAdd className="text-xs" />
                     </button>
                   </div>
-                  <p className="text-right text-sm font-semibold text-gray-800">${lineTotal.toFixed(2)}</p>
+                  <div className="text-right">
+                    {itemSaving > 0 && (
+                      <p className="text-xs text-gray-400 line-through">${(item.price * item.quantity).toFixed(2)}</p>
+                    )}
+                    <p className={`text-sm font-semibold ${itemSaving > 0 ? "text-emerald-600" : "text-gray-800"}`}>${lineTotal.toFixed(2)}</p>
+                  </div>
                   <p className="text-right text-sm text-gray-500">${lineTax.toFixed(2)} <span className="text-xs">(10%)</span></p>
                   <button onClick={() => removeItem(item.id)} className="text-gray-300 hover:text-red-400 transition-colors justify-self-center">
                     <MdClose className="text-lg" />
@@ -214,6 +235,16 @@ export default function CheckoutPage() {
                     <div>
                       <p className="font-semibold text-gray-800 text-sm">{item.name}</p>
                       <p className="text-xs text-gray-400 capitalize mt-0.5">{item.category.replace(/-/g, " ")}</p>
+                      {item.offer && (
+                        <div className="flex items-center gap-1.5 mt-1">
+                          <span className={`inline-flex items-center px-1.5 py-0.5 rounded-full text-[10px] font-bold ${OFFER_COLOURS[item.offer]}`}>
+                            {item.offer}
+                          </span>
+                          {free > 0 && (
+                            <span className="text-[10px] text-emerald-600 font-medium">🎁 {free} free · −${itemSaving.toFixed(2)}</span>
+                          )}
+                        </div>
+                      )}
                     </div>
                     <button onClick={() => removeItem(item.id)} className="text-gray-300 hover:text-red-400 transition-colors p-1">
                       <MdClose className="text-lg" />
@@ -243,7 +274,10 @@ export default function CheckoutPage() {
                       </button>
                     </div>
                     <div className="text-right">
-                      <p className="font-semibold text-gray-800 text-sm">${lineTotal.toFixed(2)}</p>
+                      {itemSaving > 0 && (
+                        <p className="text-xs text-gray-400 line-through">${(item.price * item.quantity).toFixed(2)}</p>
+                      )}
+                      <p className={`font-semibold text-sm ${itemSaving > 0 ? "text-emerald-600" : "text-gray-800"}`}>${lineTotal.toFixed(2)}</p>
                       <p className="text-xs text-gray-400">Tax: ${lineTax.toFixed(2)}</p>
                     </div>
                   </div>
@@ -297,8 +331,14 @@ export default function CheckoutPage() {
             <div className="flex-1 flex flex-col gap-2 text-sm justify-end">
               <div className="flex justify-between text-gray-600">
                 <span>Subtotal (Incl. Tax)</span>
-                <span className="font-medium">${subtotal.toFixed(2)}</span>
+                <span className="font-medium">${grossSubtotal.toFixed(2)}</span>
               </div>
+              {offerSavings > 0 && (
+                <div className="flex justify-between text-emerald-600 font-medium">
+                  <span>🎁 Offer Savings (B1G1 / B3G1)</span>
+                  <span>−${offerSavings.toFixed(2)}</span>
+                </div>
+              )}
               {method === "delivery" && (
                 <div className="flex justify-between text-gray-600">
                   <span>Delivery (Incl. Tax 10%)</span>
@@ -344,6 +384,8 @@ export default function CheckoutPage() {
                 method,
                 date,
                 time,
+                grossSubtotal,
+                offerSavings,
                 subtotal,
                 deliveryFee,
                 discountRate,

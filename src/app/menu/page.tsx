@@ -127,6 +127,26 @@ export default function MenuPage() {
 
       {/* ── Category Grid ── */}
       <main className="max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-14 w-full">
+
+        {/* Offer Callout */}
+        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4 bg-primary/5 border border-primary/15 rounded-2xl px-4 sm:px-5 py-4 mb-8 sm:mb-10">
+          <div className="flex-shrink-0 w-10 h-10 rounded-full bg-secondary flex items-center justify-center text-lg shadow-sm shadow-secondary/40">
+            🏷️
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="text-primary font-bold text-sm sm:text-base leading-snug">
+              Special Offer: First Corporate Order
+            </p>
+            <p className="text-gray-600 text-xs sm:text-sm mt-0.5">
+              10% off your first corporate order — browse the menus below and apply code{" "}
+              <span className="font-bold text-secondary bg-secondary/10 px-1.5 py-0.5 rounded">
+                CORP10
+              </span>{" "}
+              at checkout.
+            </p>
+          </div>
+        </div>
+
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
           {categories.map((cat) => (
             <a

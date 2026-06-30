@@ -1,6 +1,8 @@
 "use client";
 
 import { createContext, useContext, useState, useEffect, useCallback } from "react";
+import type { Offer } from "@/lib/offers";
+import { offerDiscount } from "@/lib/offers";
 
 export type CartItem = {
   id: number;
@@ -10,6 +12,7 @@ export type CartItem = {
   category: string;
   dietary: string[];
   quantity: number;
+  offer?: Offer | null;
 };
 
 type CartContextType = {
@@ -62,7 +65,11 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const clearCart = useCallback(() => setItems([]), []);
 
   const totalItems = items.reduce((s, i) => s + i.quantity, 0);
-  const totalPrice = items.reduce((s, i) => s + i.price * i.quantity, 0);
+  // totalPrice deducts offer savings so any consumer gets the correct payable amount
+  const totalPrice = items.reduce(
+    (s, i) => s + i.price * i.quantity - offerDiscount(i.offer, i.price, i.quantity),
+    0
+  );
 
   return (
     <CartContext.Provider value={{ items, addItem, removeItem, updateQty, clearCart, totalItems, totalPrice }}>

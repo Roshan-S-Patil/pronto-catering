@@ -1,10 +1,12 @@
 "use client";
 
-import { use, useState, useEffect, useRef } from "react";
+import { use, useState, useEffect, useRef, useCallback } from "react";
 import Navbar from "@/components/Navbar";
 import { MdFilterList, MdSearch, MdClose, MdOutlineRequestQuote, MdShoppingCart, MdCheck } from "react-icons/md";
 import { useCart } from "@/context/CartContext";
 import { MdAdd, MdRemove } from "react-icons/md";
+import { freeQty, offerDiscount, offerMinQty, OFFER_LABELS, OFFER_COLOURS } from "@/lib/offers";
+import type { Offer } from "@/lib/offers";
 
 // ── Types ──────────────────────────────────────────────────────────────────
 
@@ -24,9 +26,10 @@ type Item = {
   dietary: string[];
   img: string;
   desc: string;
+  offer?: Offer | null;
 };
 
-type UmbrellaKey = "category" | "dietary" | "price";
+type UmbrellaKey = "category" | "dietary" | "offers" | "price";
 type PriceSort = "low" | "high" | null;
 
 // ── Constants ──────────────────────────────────────────────────────────────
@@ -66,40 +69,40 @@ function toSlug(name: string) {
 
 const ITEMS: Item[] = [
   // Breakfast Menu
-  { id: 1,  name: "Smashed Avo & Feta Toast",     category: "breakfast-menu",         price: 8.5,  dietary: ["vegetarian","gluten"],                      img: "https://images.unsplash.com/photo-1525351484163-7529414344d8?w=600&q=80", desc: "Sourdough toast topped with smashed avocado, crumbled feta and dukkah." },
-  { id: 2,  name: "Bircher Muesli Cup",            category: "breakfast-menu",         price: 6.0,  dietary: ["vegetarian","gluten","nuts"],                img: "https://images.unsplash.com/photo-1517673132405-a56a62b18caf?w=600&q=80", desc: "Overnight oats with apple, yoghurt, toasted almonds and honey." },
-  { id: 3,  name: "Bacon & Egg Roll",              category: "breakfast-menu",         price: 7.5,  dietary: ["gluten","halal"],                            img: "https://images.unsplash.com/photo-1550547660-d9450f859349?w=600&q=80", desc: "Soft brioche roll with free-range eggs, bacon and tomato relish." },
+  { id: 1,  name: "Smashed Avo & Feta Toast",     category: "breakfast-menu",         price: 8.5,  dietary: ["vegetarian","gluten"],                      img: "https://images.unsplash.com/photo-1525351484163-7529414344d8?w=600&q=80", desc: "Sourdough toast topped with smashed avocado, crumbled feta and dukkah.",         offer: "B1G1" },
+  { id: 2,  name: "Bircher Muesli Cup",            category: "breakfast-menu",         price: 6.0,  dietary: ["vegetarian","gluten","nuts"],                img: "https://images.unsplash.com/photo-1517673132405-a56a62b18caf?w=600&q=80", desc: "Overnight oats with apple, yoghurt, toasted almonds and honey.",                 offer: "B3G1" },
+  { id: 3,  name: "Bacon & Egg Roll",              category: "breakfast-menu",         price: 7.5,  dietary: ["gluten","halal"],                            img: "https://images.unsplash.com/photo-1550547660-d9450f859349?w=600&q=80", desc: "Soft brioche roll with free-range eggs, bacon and tomato relish.",               offer: "B1G1" },
   // Morning Tea
-  { id: 4,  name: "Assorted Mini Muffins",         category: "morning-tea-menu",       price: 3.5,  dietary: ["vegetarian","gluten","nuts"],                img: "https://images.unsplash.com/photo-1607958996333-41aef7caefaa?w=600&q=80", desc: "Blueberry, banana choc-chip and raspberry lemon mini muffins." },
-  { id: 5,  name: "Fruit Skewers",                 category: "morning-tea-menu",       price: 4.0,  dietary: ["vegan","gluten-free","dairy-free"],          img: "https://images.unsplash.com/photo-1490474418585-ba9bad8fd0ea?w=600&q=80", desc: "Seasonal fresh fruit on bamboo skewers with a mint yoghurt dip." },
-  { id: 6,  name: "Almond Croissant",              category: "morning-tea-menu",       price: 5.5,  dietary: ["vegetarian","gluten","nuts"],                img: "https://images.unsplash.com/photo-1530610476181-d83430b64dcd?w=600&q=80", desc: "Flaky butter croissant filled with almond frangipane and icing sugar." },
+  { id: 4,  name: "Assorted Mini Muffins",         category: "morning-tea-menu",       price: 3.5,  dietary: ["vegetarian","gluten","nuts"],                img: "https://images.unsplash.com/photo-1607958996333-41aef7caefaa?w=600&q=80", desc: "Blueberry, banana choc-chip and raspberry lemon mini muffins.",                  offer: "B3G1" },
+  { id: 5,  name: "Fruit Skewers",                 category: "morning-tea-menu",       price: 4.0,  dietary: ["vegan","gluten-free","dairy-free"],          img: "https://images.unsplash.com/photo-1490474418585-ba9bad8fd0ea?w=600&q=80", desc: "Seasonal fresh fruit on bamboo skewers with a mint yoghurt dip.",               offer: "B3G1" },
+  { id: 6,  name: "Almond Croissant",              category: "morning-tea-menu",       price: 5.5,  dietary: ["vegetarian","gluten","nuts"],                img: "https://images.unsplash.com/photo-1530610476181-d83430b64dcd?w=600&q=80", desc: "Flaky butter croissant filled with almond frangipane and icing sugar.",          offer: "B1G1" },
   // Set Morning Tea
-  { id: 7,  name: "Classic Morning Tea Platter",   category: "set-morning-tea-platters",price: 22.0, dietary: ["vegetarian","nuts","gluten"],               img: "https://images.unsplash.com/photo-1555507036-ab1f4038808a?w=600&q=80", desc: "Scones, mini muffins, fruit skewers and assorted biscuits for 4." },
+  { id: 7,  name: "Classic Morning Tea Platter",   category: "set-morning-tea-platters",price: 22.0, dietary: ["vegetarian","nuts","gluten"],               img: "https://images.unsplash.com/photo-1555507036-ab1f4038808a?w=600&q=80", desc: "Scones, mini muffins, fruit skewers and assorted biscuits for 4.",              offer: "B1G1" },
   // Salads
-  { id: 8,  name: "Mediterranean Chickpea Salad",  category: "salads-menu",            price: 12.0, dietary: ["vegan","gluten-free","dairy-free"],          img: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=600&q=80", desc: "Chickpeas, cucumber, tomato, olives and red onion in lemon-herb dressing." },
-  { id: 9,  name: "Grilled Salmon Nicoise",        category: "salads-menu",            price: 16.5, dietary: ["pescatarian","gluten-free","dairy-free"],    img: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=600&q=80", desc: "Green beans, eggs, olives and cherry tomatoes with grilled Atlantic salmon." },
-  { id: 10, name: "Caesar Salad Pot",              category: "salads-menu",            price: 11.0, dietary: ["gluten","halal"],                            img: "https://images.unsplash.com/photo-1550304943-4f24f54ddde9?w=600&q=80", desc: "Baby cos, parmesan, croutons and house-made Caesar dressing." },
+  { id: 8,  name: "Mediterranean Chickpea Salad",  category: "salads-menu",            price: 12.0, dietary: ["vegan","gluten-free","dairy-free"],          img: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=600&q=80", desc: "Chickpeas, cucumber, tomato, olives and red onion in lemon-herb dressing.",     offer: "B1G1" },
+  { id: 9,  name: "Grilled Salmon Nicoise",        category: "salads-menu",            price: 16.5, dietary: ["pescatarian","gluten-free","dairy-free"],    img: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=600&q=80", desc: "Green beans, eggs, olives and cherry tomatoes with grilled Atlantic salmon.",   offer: null  },
+  { id: 10, name: "Caesar Salad Pot",              category: "salads-menu",            price: 11.0, dietary: ["gluten","halal"],                            img: "https://images.unsplash.com/photo-1550304943-4f24f54ddde9?w=600&q=80", desc: "Baby cos, parmesan, croutons and house-made Caesar dressing.",                  offer: "B3G1" },
   // Finger Food
-  { id: 11, name: "Vegetable Spring Rolls",        category: "finger-food-canap-s",    price: 5.0,  dietary: ["vegan","gluten","soya"],                     img: "https://images.unsplash.com/photo-1563245372-f21724e3856d?w=600&q=80", desc: "Crispy rolls filled with cabbage, carrot, vermicelli and ginger." },
-  { id: 12, name: "Prawn Twisters",                category: "finger-food-canap-s",    price: 7.5,  dietary: ["pescatarian","gluten","sulphites"],           img: "https://images.unsplash.com/photo-1625944525533-473f1a3d54e7?w=600&q=80", desc: "Tiger prawns wrapped in wonton pastry with sweet chilli sauce." },
-  { id: 13, name: "Stuffed Mushrooms",             category: "finger-food-canap-s",    price: 6.0,  dietary: ["vegetarian","gluten-free","halal"],           img: "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=600&q=80", desc: "Button mushrooms filled with herbed ricotta and sun-dried tomato." },
+  { id: 11, name: "Vegetable Spring Rolls",        category: "finger-food-canap-s",    price: 5.0,  dietary: ["vegan","gluten","soya"],                     img: "https://images.unsplash.com/photo-1563245372-f21724e3856d?w=600&q=80", desc: "Crispy rolls filled with cabbage, carrot, vermicelli and ginger.",               offer: "B3G1" },
+  { id: 12, name: "Prawn Twisters",                category: "finger-food-canap-s",    price: 7.5,  dietary: ["pescatarian","gluten","sulphites"],           img: "https://images.unsplash.com/photo-1625944525533-473f1a3d54e7?w=600&q=80", desc: "Tiger prawns wrapped in wonton pastry with sweet chilli sauce.",                offer: "B1G1" },
+  { id: 13, name: "Stuffed Mushrooms",             category: "finger-food-canap-s",    price: 6.0,  dietary: ["vegetarian","gluten-free","halal"],           img: "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=600&q=80", desc: "Button mushrooms filled with herbed ricotta and sun-dried tomato.",              offer: "B3G1" },
   // Hot Meals
-  { id: 14, name: "Beef Lasagne",                  category: "hot-meals",              price: 14.0, dietary: ["gluten","soya"],                             img: "https://images.unsplash.com/photo-1574894709920-11b28e7367e3?w=600&q=80", desc: "Slow-cooked beef bolognese layered with béchamel and fresh pasta." },
-  { id: 15, name: "Butter Chicken with Rice",      category: "hot-meals",              price: 13.5, dietary: ["halal","gluten-free"],                       img: "https://images.unsplash.com/photo-1603894584373-5ac82b2ae398?w=600&q=80", desc: "Tender chicken thighs in a rich tomato-cream sauce on steamed basmati." },
-  { id: 16, name: "Pumpkin & Spinach Quiche",      category: "hot-meals",              price: 9.5,  dietary: ["vegetarian","gluten"],                       img: "https://images.unsplash.com/photo-1562967914-608f82629710?w=600&q=80", desc: "Shortcrust pastry filled with roasted pumpkin, spinach and gruyère." },
+  { id: 14, name: "Beef Lasagne",                  category: "hot-meals",              price: 14.0, dietary: ["gluten","soya"],                             img: "https://images.unsplash.com/photo-1574894709920-11b28e7367e3?w=600&q=80", desc: "Slow-cooked beef bolognese layered with béchamel and fresh pasta.",             offer: "B1G1" },
+  { id: 15, name: "Butter Chicken with Rice",      category: "hot-meals",              price: 13.5, dietary: ["halal","gluten-free"],                       img: "https://images.unsplash.com/photo-1603894584373-5ac82b2ae398?w=600&q=80", desc: "Tender chicken thighs in a rich tomato-cream sauce on steamed basmati.",        offer: "B1G1" },
+  { id: 16, name: "Pumpkin & Spinach Quiche",      category: "hot-meals",              price: 9.5,  dietary: ["vegetarian","gluten"],                       img: "https://images.unsplash.com/photo-1562967914-608f82629710?w=600&q=80", desc: "Shortcrust pastry filled with roasted pumpkin, spinach and gruyère.",           offer: "B3G1" },
   // Sandwiches
-  { id: 17, name: "Club Sandwich",                 category: "sandwiches-rolls-wraps", price: 10.5, dietary: ["gluten","halal"],                            img: "https://images.unsplash.com/photo-1553909489-cd47e0907980?w=600&q=80", desc: "Triple-decker with chicken, bacon, egg, lettuce and tomato on white toast." },
-  { id: 18, name: "Falafel Wrap",                  category: "sandwiches-rolls-wraps", price: 9.0,  dietary: ["vegan","gluten","dairy-free"],               img: "https://images.unsplash.com/photo-1565299585323-38d6b0865b47?w=600&q=80", desc: "Crispy falafel, hummus, tabouleh and pickled turnips in a soft tortilla." },
+  { id: 17, name: "Club Sandwich",                 category: "sandwiches-rolls-wraps", price: 10.5, dietary: ["gluten","halal"],                            img: "https://images.unsplash.com/photo-1553909489-cd47e0907980?w=600&q=80", desc: "Triple-decker with chicken, bacon, egg, lettuce and tomato on white toast.",    offer: "B1G1" },
+  { id: 18, name: "Falafel Wrap",                  category: "sandwiches-rolls-wraps", price: 9.0,  dietary: ["vegan","gluten","dairy-free"],               img: "https://images.unsplash.com/photo-1565299585323-38d6b0865b47?w=600&q=80", desc: "Crispy falafel, hummus, tabouleh and pickled turnips in a soft tortilla.",      offer: "B3G1" },
   // Set Lunch
-  { id: 19, name: "Working Lunch Box",             category: "set-lunch-menus",        price: 18.0, dietary: ["gluten","halal"],                            img: "https://images.unsplash.com/photo-1547592180-85f173990554?w=600&q=80", desc: "Sandwich, side salad, fruit and a cookie — all in one neat box." },
+  { id: 19, name: "Working Lunch Box",             category: "set-lunch-menus",        price: 18.0, dietary: ["gluten","halal"],                            img: "https://images.unsplash.com/photo-1547592180-85f173990554?w=600&q=80", desc: "Sandwich, side salad, fruit and a cookie — all in one neat box.",               offer: "B1G1" },
   // Afternoon Tea
-  { id: 20, name: "Scones with Jam & Cream",       category: "afternoon-tea-menu",     price: 5.5,  dietary: ["vegetarian","gluten"],                       img: "https://images.unsplash.com/photo-1464305795204-6f5bbfc7fb81?w=600&q=80", desc: "Buttermilk scones with strawberry jam and whipped cream." },
-  { id: 21, name: "Macarons (Box of 6)",           category: "afternoon-tea-menu",     price: 14.0, dietary: ["vegetarian","gluten-free","nuts"],            img: "https://images.unsplash.com/photo-1558326567-98166e232c52?w=600&q=80", desc: "Vanilla, pistachio, raspberry and salted caramel French macarons." },
+  { id: 20, name: "Scones with Jam & Cream",       category: "afternoon-tea-menu",     price: 5.5,  dietary: ["vegetarian","gluten"],                       img: "https://images.unsplash.com/photo-1464305795204-6f5bbfc7fb81?w=600&q=80", desc: "Buttermilk scones with strawberry jam and whipped cream.",                      offer: "B3G1" },
+  { id: 21, name: "Macarons (Box of 6)",           category: "afternoon-tea-menu",     price: 14.0, dietary: ["vegetarian","gluten-free","nuts"],            img: "https://images.unsplash.com/photo-1558326567-98166e232c52?w=600&q=80", desc: "Vanilla, pistachio, raspberry and salted caramel French macarons.",             offer: "B1G1" },
   // Special Dietary
-  { id: 22, name: "Vegan Grain Bowl",              category: "special-dietary-menu",   price: 13.0, dietary: ["vegan","gluten-free","dairy-free","nuts"],    img: "https://images.unsplash.com/photo-1540420773420-3366772f4999?w=600&q=80", desc: "Quinoa, roasted veg, edamame, pickled slaw and tahini dressing." },
+  { id: 22, name: "Vegan Grain Bowl",              category: "special-dietary-menu",   price: 13.0, dietary: ["vegan","gluten-free","dairy-free","nuts"],    img: "https://images.unsplash.com/photo-1540420773420-3366772f4999?w=600&q=80", desc: "Quinoa, roasted veg, edamame, pickled slaw and tahini dressing.",               offer: "B1G1" },
   // Corporate Platters
-  { id: 23, name: "Antipasto Sharing Platter",     category: "corporate-platters",     price: 45.0, dietary: ["gluten","sulphites","nuts"],                 img: "https://images.unsplash.com/photo-1555507036-ab1f4038808a?w=600&q=80", desc: "Cured meats, marinated olives, cheeses, dips and artisan crackers." },
-  { id: 24, name: "Set Breakfast Basket",          category: "set-breakfast-menus",    price: 16.0, dietary: ["vegetarian","gluten","nuts"],                img: "https://images.unsplash.com/photo-1504754524776-8f4f37790ca0?w=600&q=80", desc: "Mini pastries, yoghurt, seasonal fruit and freshly squeezed juice." },
+  { id: 23, name: "Antipasto Sharing Platter",     category: "corporate-platters",     price: 45.0, dietary: ["gluten","sulphites","nuts"],                 img: "https://images.unsplash.com/photo-1555507036-ab1f4038808a?w=600&q=80", desc: "Cured meats, marinated olives, cheeses, dips and artisan crackers.",            offer: "B1G1" },
+  { id: 24, name: "Set Breakfast Basket",          category: "set-breakfast-menus",    price: 16.0, dietary: ["vegetarian","gluten","nuts"],                img: "https://images.unsplash.com/photo-1504754524776-8f4f37790ca0?w=600&q=80", desc: "Mini pastries, yoghurt, seasonal fruit and freshly squeezed juice.",            offer: "B1G1" },
 ];
 
 // ── Helpers ────────────────────────────────────────────────────────────────
@@ -133,14 +136,39 @@ export default function CategoryPage({ params }: { params: Promise<{ category: s
   const [selectedCategories, setSelectedCategories] = useState<string[]>([slug]);
   const [selectedDietary, setSelectedDietary] = useState<string[]>([]);
   const [priceSort, setPriceSort] = useState<PriceSort>(null);
+  const [selectedOffers, setSelectedOffers] = useState<string[]>([]);
   const [search, setSearch] = useState("");
 
   // pending state (applied only when user clicks Apply)
   const [pendingCategories, setPendingCategories] = useState<string[]>([slug]);
   const [pendingDietary, setPendingDietary] = useState<string[]>([]);
   const [pendingPrice, setPendingPrice] = useState<PriceSort>(null);
+  const [pendingOffers, setPendingOffers] = useState<string[]>([]);
 
   const popoverRef = useRef<HTMLDivElement>(null);
+
+  // add-to-cart promo tooltip
+  const [tooltipItemId, setTooltipItemId] = useState<number | null>(null);
+  const tooltipTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const showTooltip = useCallback((id: number) => {
+    if (tooltipTimeoutRef.current) clearTimeout(tooltipTimeoutRef.current);
+    setTooltipItemId(id);
+    tooltipTimeoutRef.current = setTimeout(() => setTooltipItemId(null), 4000);
+  }, []);
+
+  useEffect(() => {
+    return () => { if (tooltipTimeoutRef.current) clearTimeout(tooltipTimeoutRef.current); };
+  }, []);
+
+  useEffect(() => {
+    if (tooltipItemId === null) return;
+    const t = setTimeout(() => {
+      const handler = () => { setTooltipItemId(null); if (tooltipTimeoutRef.current) clearTimeout(tooltipTimeoutRef.current); };
+      document.addEventListener("click", handler, { once: true });
+    }, 0);
+    return () => clearTimeout(t);
+  }, [tooltipItemId]);
 
   // close popover on outside click
   useEffect(() => {
@@ -159,6 +187,7 @@ export default function CategoryPage({ params }: { params: Promise<{ category: s
     setPendingCategories(selectedCategories);
     setPendingDietary(selectedDietary);
     setPendingPrice(priceSort);
+    setPendingOffers(selectedOffers);
     setPopoverOpen(true);
   }
 
@@ -166,6 +195,7 @@ export default function CategoryPage({ params }: { params: Promise<{ category: s
     setSelectedCategories(pendingCategories);
     setSelectedDietary(pendingDietary);
     setPriceSort(pendingPrice);
+    setSelectedOffers(pendingOffers);
     setPopoverOpen(false);
   }
 
@@ -173,27 +203,31 @@ export default function CategoryPage({ params }: { params: Promise<{ category: s
     setPendingCategories([]);
     setPendingDietary([]);
     setPendingPrice(null);
+    setPendingOffers([]);
     setSelectedCategories([]);
     setSelectedDietary([]);
     setPriceSort(null);
+    setSelectedOffers([]);
     setPopoverOpen(false);
   }
 
   // total active filter count (for badge on filter button)
-  const totalActive = selectedCategories.length + selectedDietary.length + (priceSort ? 1 : 0);
-  const pendingTotal = pendingCategories.length + pendingDietary.length + (pendingPrice ? 1 : 0);
+  const totalActive = selectedCategories.length + selectedDietary.length + (priceSort ? 1 : 0) + selectedOffers.length;
+  const pendingTotal = pendingCategories.length + pendingDietary.length + (pendingPrice ? 1 : 0) + pendingOffers.length;
 
   // derived filtered + sorted items
   let visible = ITEMS;
   if (selectedCategories.length) visible = visible.filter((i) => selectedCategories.includes(i.category));
   if (selectedDietary.length) visible = visible.filter((i) => selectedDietary.every((d) => i.dietary.includes(d)));
+  if (selectedOffers.length) visible = visible.filter((i) => i.offer != null && selectedOffers.includes(i.offer));
   if (search.trim()) visible = visible.filter((i) => i.name.toLowerCase().includes(search.toLowerCase()));
   if (priceSort === "low") visible = [...visible].sort((a, b) => a.price - b.price);
   if (priceSort === "high") visible = [...visible].sort((a, b) => b.price - a.price);
 
-  const umbrellaCounts = {
+  const umbrellaCounts: Record<UmbrellaKey, number> = {
     category: pendingCategories.length,
     dietary: pendingDietary.length,
+    offers: pendingOffers.length,
     price: pendingPrice ? 1 : 0,
   };
 
@@ -255,15 +289,20 @@ export default function CategoryPage({ params }: { params: Promise<{ category: s
               )}
             </button>
 
-            {/* Popover — stacks vertically on mobile */}
+            {/* Popover */}
             {popoverOpen && (
               <div className="absolute top-full left-0 mt-2 w-[min(520px,calc(100vw-24px))] bg-white rounded-2xl shadow-2xl border border-gray-100 z-50 overflow-hidden">
                 <div className="flex flex-col sm:flex-row">
 
-                  {/* Umbrella terms — row on mobile, column on desktop */}
+                  {/* Umbrella terms */}
                   <div className="sm:w-44 bg-gray-50 sm:border-r border-b sm:border-b-0 border-gray-100 p-2 sm:p-3 flex flex-row sm:flex-col gap-1 overflow-x-auto">
-                    {(["category", "dietary", "price"] as UmbrellaKey[]).map((key) => {
-                      const labels: Record<UmbrellaKey, string> = { category: "Menu Category", dietary: "Dietary", price: "Price" };
+                    {(["category", "dietary", "offers", "price"] as UmbrellaKey[]).map((key) => {
+                      const labels: Record<UmbrellaKey, string> = {
+                        category: "Menu Category",
+                        dietary: "Dietary",
+                        offers: "Offers",
+                        price: "Price",
+                      };
                       const count = umbrellaCounts[key];
                       return (
                         <button
@@ -322,6 +361,29 @@ export default function CategoryPage({ params }: { params: Promise<{ category: s
                                 {tag.abbrev}
                               </span>
                               {tag.label}
+                            </label>
+                          );
+                        })}
+                      </div>
+                    )}
+
+                    {activeUmbrella === "offers" && (
+                      <div className="flex flex-col gap-3">
+                        <p className="text-xs text-gray-400 mb-1">Filter items that have a special offer available.</p>
+                        {(["B1G1", "B3G1"] as Offer[]).map((key) => {
+                          const checked = pendingOffers.includes(key);
+                          return (
+                            <label key={key} className="flex items-center gap-2 cursor-pointer text-sm text-gray-700 hover:text-primary">
+                              <input
+                                type="checkbox"
+                                checked={checked}
+                                onChange={() => setPendingOffers(toggle(pendingOffers, key))}
+                                className="accent-primary w-4 h-4"
+                              />
+                              <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-bold ${OFFER_COLOURS[key]}`}>
+                                {key}
+                              </span>
+                              <span>{OFFER_LABELS[key]}</span>
                             </label>
                           );
                         })}
@@ -417,6 +479,11 @@ export default function CategoryPage({ params }: { params: Promise<{ category: s
                 const dietaryDetails = DIETARY_TAGS.filter((t) => item.dietary.includes(t.key));
                 const cartItem = items.find((i) => i.id === item.id);
                 const qty = cartItem?.quantity ?? 1;
+                const free = item.offer ? freeQty(item.offer, cartItem?.quantity ?? 0) : 0;
+                const saving = item.offer ? offerDiscount(item.offer, item.price, cartItem?.quantity ?? 0) : 0;
+                const minQty = item.offer ? offerMinQty(item.offer) : 0;
+                const needMore = item.offer && cartItem && free === 0 ? minQty - cartItem.quantity : 0;
+
                 return (
                   <div key={item.id} className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-shadow duration-300 flex flex-col">
                     {/* Image */}
@@ -427,13 +494,31 @@ export default function CategoryPage({ params }: { params: Promise<{ category: s
                         alt={item.name}
                         className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
                       />
+                      {/* Offer ribbon on image */}
+                      {item.offer && (
+                        <span className={`absolute top-3 left-3 px-2.5 py-1 rounded-full text-xs font-bold shadow-sm ${OFFER_COLOURS[item.offer]}`}>
+                          🎁 {item.offer}
+                        </span>
+                      )}
                     </div>
 
                     {/* Body */}
                     <div className="p-4 sm:p-5 flex flex-col flex-1">
                       <h3 className="text-primary font-bold text-base mb-1">{item.name}</h3>
                       <p className="text-gray-500 text-sm mb-2 flex-1">{item.desc}</p>
-                      <p className="text-secondary font-bold text-base mb-3">${item.price.toFixed(2)}</p>
+
+                      {/* Price row */}
+                      <div className="flex items-center flex-wrap gap-2 mb-3">
+                        <p className="text-secondary font-bold text-base">${item.price.toFixed(2)}</p>
+                        {item.offer && (
+                          <span
+                            title={OFFER_LABELS[item.offer]}
+                            className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-bold cursor-default ${OFFER_COLOURS[item.offer]}`}
+                          >
+                            {item.offer}
+                          </span>
+                        )}
+                      </div>
 
                       {/* Dietary pills */}
                       {dietaryDetails.length > 0 && (
@@ -444,8 +529,30 @@ export default function CategoryPage({ params }: { params: Promise<{ category: s
                         </div>
                       )}
 
+                      {/* Offer activation status (only when item is in cart) */}
+                      {item.offer && cartItem && (
+                        <div className={`text-xs rounded-lg px-2.5 py-1.5 mb-3 flex items-center gap-1.5 ${
+                          free > 0
+                            ? "bg-emerald-50 border border-emerald-100 text-emerald-700"
+                            : "bg-amber-50 border border-amber-100 text-amber-700"
+                        }`}>
+                          {free > 0 ? (
+                            <>
+                              <span>🎁</span>
+                              <span className="font-semibold">{free} item{free > 1 ? "s" : ""} free!</span>
+                              <span className="ml-auto font-medium">Save ${saving.toFixed(2)}</span>
+                            </>
+                          ) : (
+                            <>
+                              <span>🏷️</span>
+                              <span>Add {needMore} more to unlock {item.offer}</span>
+                            </>
+                          )}
+                        </div>
+                      )}
+
                       <div className="flex items-center gap-2 mt-auto">
-                        {/* Qty stepper — bigger touch targets on mobile */}
+                        {/* Qty stepper */}
                         <div className="flex items-center bg-gray-100 rounded-full px-1.5 py-1 gap-1">
                           <button
                             onClick={() => cartItem ? (qty === 1 ? removeItem(item.id) : updateQty(item.id, qty - 1)) : null}
@@ -466,12 +573,22 @@ export default function CategoryPage({ params }: { params: Promise<{ category: s
 
                         {/* Add to Cart */}
                         <button
-                          onClick={() => addItem({ id: item.id, name: item.name, price: item.price, img: item.img, category: item.category, dietary: item.dietary })}
+                          onClick={() => {
+                            addItem({ id: item.id, name: item.name, price: item.price, img: item.img, category: item.category, dietary: item.dietary, offer: item.offer });
+                            showTooltip(item.id);
+                          }}
                           className={`flex-1 flex items-center justify-center gap-1.5 font-semibold text-xs sm:text-sm py-2.5 rounded-full transition-colors ${cartItem ? "bg-green-500 text-white hover:bg-green-600" : "bg-primary text-white hover:bg-secondary"}`}
                         >
                           {cartItem ? <><MdCheck className="text-sm" /> Added</> : <><MdShoppingCart className="text-sm" /> Add to Cart</>}
                         </button>
                       </div>
+
+                      {/* Add-to-cart promo notice */}
+                      {tooltipItemId === item.id && (
+                        <p className="mt-2 text-xs text-gray-600 bg-orange-50 border border-orange-100 rounded-xl px-3 py-2 leading-relaxed">
+                          💡 First corporate order? Apply <span className="font-bold text-secondary">CORP10</span> at checkout for 10% off.
+                        </p>
+                      )}
                     </div>
                   </div>
                 );
