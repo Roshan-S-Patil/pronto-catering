@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Navbar from "@/components/Navbar";
 import { MdRestaurantMenu, MdOutlineRequestQuote } from "react-icons/md";
+import { GiMeal } from "react-icons/gi";
 
 const whyChoose = [
   {
@@ -83,7 +84,7 @@ export default function Home() {
       <Navbar />
 
       {/* ── Hero ── */}
-      <section className="relative w-full bg-black flex items-center overflow-hidden min-h-[320px] md:min-h-screen">
+      <section className="relative w-full bg-black flex items-center overflow-hidden min-h-80 max-h-[55vh] md:max-h-none md:min-h-screen">
         {/* Food image — right half, fading into black on the left */}
         <div className="absolute inset-0">
           <div className="absolute right-0 top-0 w-full h-full md:w-3/5">
@@ -95,7 +96,7 @@ export default function Home() {
               priority
             />
             {/* Fade: fully black on left edge, transparent on right */}
-            <div className="absolute inset-0 bg-gradient-to-r from-black via-black/80 to-transparent" />
+            <div className="absolute inset-0 bg-linear-to-r from-black via-black/80 to-transparent" />
           </div>
         </div>
 
@@ -110,22 +111,59 @@ export default function Home() {
               <br />
               Every Event Memorable
             </h1>
-            <p className="text-white/75 text-xs sm:text-base md:text-lg max-w-md mb-5 sm:mb-8 hidden sm:block">
+
+            {/* Overall rating */}
+            <div className="flex items-center gap-2 mb-4 sm:mb-5">
+              <div className="flex text-secondary text-sm sm:text-base leading-none tracking-tight">
+                ★★★★★
+              </div>
+              <span className="text-white font-bold text-sm sm:text-base">4.9</span>
+              <span className="text-white/40 text-xs">·</span>
+              <span className="text-white/60 text-xs sm:text-sm">500+ happy clients</span>
+            </div>
+
+            <p className="text-white/75 text-xs sm:text-base md:text-lg max-w-md mb-4 sm:mb-5 hidden sm:block">
               From intimate gatherings to large corporate functions — fresh,
               delicious food delivered on time, every time across Perth Metro.
             </p>
-            <div className="flex flex-row flex-wrap gap-2 sm:gap-3">
+
+            {/* 10% corporate offer card */}
+            <div className="flex items-center gap-3 bg-linear-to-r from-orange-500/20 to-orange-400/5 border border-orange-500/50 rounded-2xl px-4 py-3.5 mb-6 sm:mb-7 w-fit">
+              <div className="shrink-0 bg-secondary rounded-xl px-3 py-3 text-center shadow-md shadow-orange-600/40">
+                <span className="text-white text-2xl sm:text-3xl font-black leading-none block">10%</span>
+                <span className="text-white/90 text-[9px] font-bold uppercase tracking-widest">OFF</span>
+              </div>
+              <div>
+                <div className="flex items-center gap-1.5 mb-1">
+                  <span className="w-1.5 h-1.5 rounded-full bg-orange-400 animate-pulse inline-block shrink-0" />
+                  <span className="text-orange-300 text-[10px] font-bold uppercase tracking-wider">Limited Offer</span>
+                </div>
+                <p className="text-white font-bold text-sm leading-tight">First Corporate Order</p>
+                <p className="text-white/60 text-xs mt-0.5">
+                  Your first event, our treat — use code{" "}
+                  <span className="text-secondary font-bold tracking-wide">CORP10</span>
+                </p>
+              </div>
+            </div>
+
+            <div className="flex flex-row gap-2 sm:gap-3">
+              {/* View Our Menu — outline, cloche badge top-right reveals 10% OFF */}
               <a
                 href="/menu"
-                className="flex items-center gap-1.5 border-2 border-white text-white px-4 py-2 sm:px-5 sm:py-3 rounded-full font-semibold text-xs sm:text-sm hover:bg-white hover:text-primary transition-colors whitespace-nowrap"
+                className="relative flex items-center gap-1.5 sm:gap-2 border-2 border-white text-white px-3.5 sm:px-5 py-2.5 sm:py-3 rounded-full font-semibold text-xs sm:text-sm hover:bg-white hover:text-primary transition-colors whitespace-nowrap"
               >
-                <MdRestaurantMenu className="text-sm sm:text-base" /> View Our Menu
+                <span className="absolute -top-3.5 -right-2 flex items-center gap-0.5 bg-secondary text-white text-[10px] font-bold px-2 py-1 rounded-full shadow-md shadow-orange-600/40 leading-none whitespace-nowrap">
+                  <GiMeal className="text-xs shrink-0" />
+                  10% OFF
+                </span>
+                <MdRestaurantMenu className="text-sm sm:text-base shrink-0" />
+                View Our Menu
               </a>
               <a
-                href="#quote"
-                className="flex items-center gap-1.5 bg-secondary text-white px-4 py-2 sm:px-5 sm:py-3 rounded-full font-semibold text-xs sm:text-sm hover:opacity-90 transition-opacity whitespace-nowrap"
+                href="/contact"
+                className="flex items-center gap-1.5 sm:gap-2 border-2 border-white text-white px-3.5 sm:px-5 py-2.5 sm:py-3 rounded-full font-semibold text-xs sm:text-sm hover:bg-white hover:text-primary transition-colors whitespace-nowrap"
               >
-                <MdOutlineRequestQuote className="text-sm sm:text-base" /> Request a Quote
+                <MdOutlineRequestQuote className="text-sm sm:text-base shrink-0" /> Request a Quote
               </a>
             </div>
           </div>
@@ -157,6 +195,51 @@ export default function Home() {
                 <p className="text-gray-500 text-sm">{item.desc}</p>
               </div>
             ))}
+          </div>
+
+          {/* ── Overall Rating Banner ── */}
+          <div className="mt-8 sm:mt-12 bg-white rounded-2xl shadow-sm overflow-hidden">
+            <div className="flex flex-col sm:flex-row items-center gap-0">
+
+              {/* Score block */}
+              <div className="w-full sm:w-48 bg-primary flex flex-col items-center justify-center py-8 sm:py-10 px-6 shrink-0">
+                <p className="text-white text-5xl sm:text-6xl font-black leading-none">4.9</p>
+                <div className="flex text-secondary text-xl sm:text-2xl my-2 tracking-tight">★★★★★</div>
+                <p className="text-white/60 text-xs uppercase tracking-widest text-center">Overall Rating</p>
+              </div>
+
+              {/* Breakdown */}
+              <div className="flex-1 px-6 sm:px-8 py-6 sm:py-8 w-full">
+                <p className="text-gray-700 text-sm sm:text-base font-semibold mb-1">
+                  Trusted by 500+ clients across Perth
+                </p>
+                <p className="text-gray-400 text-xs sm:text-sm mb-5">
+                  Based on verified reviews from corporate events, private functions, and daily catering orders.
+                </p>
+                <div className="space-y-2">
+                  {[
+                    { star: 5, pct: 82 },
+                    { star: 4, pct: 14 },
+                    { star: 3, pct: 3 },
+                    { star: 2, pct: 1 },
+                    { star: 1, pct: 0 },
+                  ].map(({ star, pct }) => (
+                    <div key={star} className="flex items-center gap-2 sm:gap-3">
+                      <span className="text-xs text-gray-400 w-3 shrink-0 text-right">{star}</span>
+                      <span className="text-secondary text-xs leading-none">★</span>
+                      <div className="flex-1 bg-gray-100 rounded-full h-2">
+                        <div
+                          className="bg-secondary h-2 rounded-full transition-all"
+                          style={{ width: `${pct}%` }}
+                        />
+                      </div>
+                      <span className="text-xs text-gray-400 w-7 shrink-0 text-right">{pct}%</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+            </div>
           </div>
         </div>
       </section>
@@ -191,7 +274,7 @@ export default function Home() {
                 personalised catering package.
               </p>
               <a
-                href="/quote"
+                href="/contact"
                 className="bg-white text-secondary font-semibold px-6 py-3 rounded-full hover:bg-primary hover:text-white transition-colors text-sm"
               >
                 Get a Quote
@@ -214,7 +297,7 @@ export default function Home() {
             small.
           </p>
           <a
-            href="/quote"
+            href="/contact"
             className="inline-block bg-secondary text-white font-semibold px-6 sm:px-8 py-3 sm:py-4 rounded-full text-sm sm:text-lg hover:opacity-90 transition-opacity"
           >
             Start Planning Your Event
@@ -258,7 +341,7 @@ export default function Home() {
                 </li>
                 <li>
                   <a
-                    href="#quote"
+                    href="/contact"
                     className="hover:text-white transition-colors"
                   >
                     Request a Quote

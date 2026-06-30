@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useCallback } from "react";
+import { useRouter } from "next/navigation";
 import Navbar from "@/components/Navbar";
 import { useCart } from "@/context/CartContext";
 import { MdAdd, MdRemove, MdClose, MdLocalShipping, MdStorefront, MdDiscount } from "react-icons/md";
@@ -8,6 +9,7 @@ import { MdAdd, MdRemove, MdClose, MdLocalShipping, MdStorefront, MdDiscount } f
 const DELIVERY_FEE = 22.0;
 const TAX_DIVISOR = 11;
 const DISCOUNT_CODES: Record<string, number> = {
+  CORP10: 0.1,
   PRONTO10: 0.1,
   PRONTO20: 0.2,
   WELCOME15: 0.15,
@@ -16,7 +18,8 @@ const DISCOUNT_CODES: Record<string, number> = {
 type Method = "delivery" | "pickup";
 
 export default function CheckoutPage() {
-  const { items, updateQty, removeItem } = useCart();
+  const { items, updateQty, removeItem, clearCart } = useCart();
+  const router = useRouter();
 
   const [method, setMethod] = useState<Method>("delivery");
   const [date, setDate] = useState("");
@@ -285,7 +288,7 @@ export default function CheckoutPage() {
                     </button>
                   </div>
                   {discountError && <p className="text-red-500 text-xs mt-1.5">{discountError}</p>}
-                  <p className="text-gray-400 text-xs mt-2">Try: PRONTO10, PRONTO20, WELCOME15</p>
+                  <p className="text-gray-400 text-xs mt-2">Try: CORP10, PRONTO10, PRONTO20, WELCOME15</p>
                 </>
               )}
             </div>
@@ -333,7 +336,23 @@ export default function CheckoutPage() {
             onClick={() => {
               if (!date) { alert("Please select a date."); return; }
               if (!time) { alert("Please select a time."); return; }
-              alert(`Order placed!\nMethod: ${method}\nDate: ${date}\nTime: ${time}\nTotal: AUD $${total.toFixed(2)}`);
+              const order = {
+                id: `ORD-${Date.now()}`,
+                placedAt: new Date().toISOString(),
+                status: "pending" as const,
+                items: items.map((i) => ({ id: i.id, name: i.name, price: i.price, img: i.img, quantity: i.quantity })),
+                method,
+                date,
+                time,
+                subtotal,
+                deliveryFee,
+                discountRate,
+                total,
+              };
+              const existing = JSON.parse(localStorage.getItem("pronto_orders") ?? "[]");
+              localStorage.setItem("pronto_orders", JSON.stringify([order, ...existing]));
+              router.push("/profile/orders");
+              clearCart();
             }}
             className="bg-primary text-white font-semibold px-8 py-3 rounded-full text-sm hover:bg-secondary transition-colors text-center"
           >

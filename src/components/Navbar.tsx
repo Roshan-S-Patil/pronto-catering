@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import { MdRestaurantMenu, MdOutlineRequestQuote, MdShoppingCart, MdMenu, MdClose } from "react-icons/md";
+import { MdRestaurantMenu, MdOutlineRequestQuote, MdShoppingCart, MdMenu, MdClose, MdPerson, MdStar } from "react-icons/md";
 import { useCart } from "@/context/CartContext";
 
 export default function Navbar() {
@@ -30,8 +30,14 @@ export default function Navbar() {
             <MdRestaurantMenu className="text-base" /> Menu
           </a>
           <a href="/#why-us" className="text-primary hover:text-secondary transition-colors">Why Us</a>
-          <a href="/#quote" className="flex items-center gap-1 text-secondary border border-secondary px-4 py-1.5 rounded-full hover:bg-secondary hover:text-white transition-colors">
+          <a href="/testimonials" className="flex items-center gap-1 text-primary hover:text-secondary transition-colors">
+            <MdStar className="text-base" /> Reviews
+          </a>
+          <a href="/contact" className="flex items-center gap-1 text-secondary border border-secondary px-4 py-1.5 rounded-full hover:bg-secondary hover:text-white transition-colors">
             <MdOutlineRequestQuote className="text-base" /> Get a Quote
+          </a>
+          <a href="/profile" className="text-primary hover:text-secondary transition-colors">
+            <MdPerson className="text-xl" />
           </a>
           <a href="/cart" className="relative text-primary hover:text-secondary transition-colors">
             <MdShoppingCart className="text-xl" />
@@ -43,8 +49,11 @@ export default function Navbar() {
           </a>
         </div>
 
-        {/* Mobile right: cart + hamburger */}
+        {/* Mobile right: profile + cart + hamburger */}
         <div className="flex md:hidden items-center gap-3">
+          <a href="/profile" className="text-primary">
+            <MdPerson className="text-2xl" />
+          </a>
           <a href="/cart" className="relative text-primary">
             <MdShoppingCart className="text-2xl" />
             {totalItems > 0 && (
@@ -72,7 +81,10 @@ export default function Navbar() {
           <a href="/#why-us" onClick={() => setOpen(false)} className="text-primary hover:text-secondary transition-colors py-2 border-b border-gray-50">
             Why Us
           </a>
-          <a href="/#quote" onClick={() => setOpen(false)} className="flex items-center justify-center gap-2 text-secondary border border-secondary px-4 py-2.5 rounded-full hover:bg-secondary hover:text-white transition-colors mt-1">
+          <a href="/testimonials" onClick={() => setOpen(false)} className="flex items-center gap-2 text-primary hover:text-secondary transition-colors py-2 border-b border-gray-50">
+            <MdStar className="text-lg" /> Reviews
+          </a>
+          <a href="/contact" onClick={() => setOpen(false)} className="flex items-center justify-center gap-2 text-secondary border border-secondary px-4 py-2.5 rounded-full hover:bg-secondary hover:text-white transition-colors mt-1">
             <MdOutlineRequestQuote className="text-base" /> Get a Quote
           </a>
         </div>
